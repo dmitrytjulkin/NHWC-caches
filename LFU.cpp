@@ -1,5 +1,10 @@
+#include<stdio.h>
 #include<list>
 #include<unordered_map>
+
+bool is_page_frequent(cache_t* cache, int newpage_id);
+bool is_page_cached();
+void parse_income_page();
 
 int evict_if_needed(cache_t* cache, page_t* page_requests)
 {
@@ -15,9 +20,12 @@ int evict_if_needed(cache_t* cache, page_t* page_requests)
         }
 
         bool page_cached = is_page_cached(cache, newpage_id)
-        if (is_cache_full(cache) && page_cached) evict_last_page(cache);
+
+        if (is_cache_full(cache) && page_cached) parse_income_page(cache);
         if (page_cached) slow_get_page(newpage_id);
+
         push_front(cache, newpage_id);
+        inc_freq_page(newpage_id);
 
         process_page(newpage_id);
 
@@ -25,4 +33,19 @@ int evict_if_needed(cache_t* cache, page_t* page_requests)
     }
 
     return 0; // count of hits
+}
+
+bool is_page_frequent(cache_t* cache, int newpage_id)
+{
+
+}
+
+bool is_page_cached()
+{
+
+}
+
+void parse_income_page()
+{
+
 }
