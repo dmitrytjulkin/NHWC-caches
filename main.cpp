@@ -39,7 +39,7 @@ bool cache_t<cache_content>::parse_income_page(keyT key, F slow_get_page) // now
 
     auto page_cached = is_page_cached(cache, key);  // hashmap realisation needed
 
-    if (is_cache_full() && page_cached == NULL) cache_.pop_back();
+    if (is_cache_full() && page_cached == NULL) evict_unfrequent_page(&cache_, key);
 
     if (page_cached == NULL) {
         LFU_content newpage = {key, slow_get_page(key), 1}
@@ -64,6 +64,24 @@ auto cache_t<cache_content>::is_page_cached(keyT key)    // replace it to hashma
         if (*it.key ==  key) return it;
 
     return NULL;
+}
+
+void evict_unfrequent_page (std::list* list, keyT key)
+{
+    auto it = list.begin();
+    auto rare_it = it;
+    size_t smallest_freq = it->freq_cnt;
+
+    while (it != list.end()) {
+        it++;
+        
+        if (it->freq_cnt < smallest_freq) {
+            smallest_freq = it->freq_cnt;
+            rare_it = it;
+        }
+    }
+
+    list.erase(rare_it);
 }
 
 bool is_page_frequent(keyT key)
