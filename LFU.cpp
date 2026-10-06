@@ -18,34 +18,34 @@ template <typename cache_content>
 template <typename F>
 bool cache_t<cache_content>::parse_income_page(keyT key, F slow_get_page) // now its only for LFU, so it shouldn't belong to cache_t
 {
-    if (key == 0) return false; // key == 0 - bad checking
+    cache_content* cached_page_ptr = is_page_cached(key);  // hashmap realisation needed
+    bool cache_is_full = is_cache_full();
 
-    if (is_cache_full() && !is_page_frequent(cache, key)) return false;
+    if (cached_page_ptr == NULL) {
+        if (cache_is_full && !is_page_frequent(cache_, key)) return false;
 
-    auto page_cached = is_page_cached(cache, key);  // hashmap realisation needed
+        if (cache_is_full) evict_unfrequent_page(&cache_, key);
 
-    if (is_cache_full() && page_cached == NULL) evict_unfrequent_page(&cache_, key);
-
-    if (page_cached == NULL) {
         LFU_content newpage = {key, slow_get_page(key), 1}
         cache_.push_front(newpage);
-    }
-    else {
-        cache_.splice(cache_.begin(), cache_, it);
-        cache_.freq_cnt++;
+        
+        process_page(key);
+
+        return dalse;
     }
 
+    cache_.splice(cache_.begin(), cache_, it);
+    cache_.freq_cnt++;
+    
     process_page(key);
 
     return true;
 }
 
 template <typename cache_content> 
-auto cache_t<cache_content>::is_page_cached(keyT key)    // replace it to hashmap
+cache_content* cache_t<cache_content>::is_page_cached(keyT key)    // replace it to hashmap
 {
-    auto it = cache_.begin();
-
-    for (auto it = cache.begin(); it != cache_end(); it++)
+    for (cache_content* it = cache.begin(); it != cache_end(); it++)
         if (*it.key ==  key) return it;
 
     return NULL;

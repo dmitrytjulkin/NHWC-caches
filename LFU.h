@@ -15,7 +15,7 @@ struct cache_t {
     // smth with the hashmap
 
     bool is_cache_full();
-    auto is_page_cached(keyT key);
+    cache_content* is_page_cached(keyT key);
     
     template <typename F> 
     bool parse_income_page(keyT key, F slow_get_page);
@@ -26,3 +26,6 @@ struct LFU_content {
     page_t* page;
     size_t freq_cnt;
 };
+
+void slow_get_page(keyT key);
+void process_page(keyT key);
