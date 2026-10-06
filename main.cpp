@@ -1,102 +1,42 @@
 #include<stdio.h>
+#include<iostream>
+#include<print>
 #include<list>
 #include<unordered_map>
 
 #include"LFU.h"
 
-typedef int keyT;
-
-template <typename cache_content> struct cache_t {
-    std::list<cache_content> cache_;
-
-    // smth with the hashmap
-
-    bool is_cache_full();
-    bool is_page_cached(keyT key);
-    template <typename F> auto parse_income_page(keyT key, F slow_get_page);
-};
-
-struct LFU_content {
-    keyT key;
-    page_t* page;
-    size_t freq_cnt;
-};
-
-template <typename cache_content> 
-bool cache_t<cache_content>::is_cache_full()
-{
-    if (cache_.size() < CACHE_SIZE) return false;
-
-    return true;
-}
-
-template <typename cache_content, typename F> 
-bool cache_t<cache_content>::parse_income_page(keyT key, F slow_get_page) // now its only for LFU, so it shouldn't belong to cache_t
-{
-    if (key == 0) return false;
-
-    if (!is_page_frequent(cache, key)) return false;
-
-    auto page_cached = is_page_cached(cache, key);  // hashmap realisation needed
-
-    if (is_cache_full() && page_cached == NULL) evict_unfrequent_page(&cache_, key);
-
-    if (page_cached == NULL) {
-        LFU_content newpage = {key, slow_get_page(key), 1}
-        cache_.push_front(newpage);
-    }
-    else {
-        cache_.splice(cache_.begin(), cache_, it);
-        cache_.freq_cnt++;
-    }
-
-    process_page(key);
-
-    return true;
-}
-
-template <typename cache_content> 
-auto cache_t<cache_content>::is_page_cached(keyT key)    // replace it to hashmap
-{
-    auto it = cache_.begin();
-
-    for (auto it = cache.begin(); it != cache_end(); it++)
-        if (*it.key ==  key) return it;
-
-    return NULL;
-}
-
-void evict_unfrequent_page (std::list* list, keyT key)
-{
-    auto it = list.begin();
-    auto rare_it = it;
-    size_t smallest_freq = it->freq_cnt;
-
-    while (it != list.end()) {
-        it++;
-        
-        if (it->freq_cnt < smallest_freq) {
-            smallest_freq = it->freq_cnt;
-            rare_it = it;
-        }
-    }
-
-    list.erase(rare_it);
-}
-
-bool is_page_frequent(keyT key)
-{
-
-}
-
-void slow_get_page(keyT key)
-{
-    return 0;
-}
-
 int main ()
 {
-    cache_t LFU;
+    // read_config();
+    // ....
+
+    // read_input_data();
+    std::cout << "write down size of cache, count of data, the sequence of data";
+    
+    size_t cache_sz = 0, data_cnt = 0;
+    std::cin >> cache_sz >> data_cnt;
+
+    int page_seq[1000] = {};
+    for (int n = 0; n < data_cnt; n++)
+        std::cin >> page_seq[n];
+
+    #if 0
+    int cache_sz = 2, data_cnt = 0;
+    int* cache_requests = {1, 2, 1, 3, 2, 5, 2}
+    #endif
+
+    // go through LFU algorithm
+    cache_t<LFU_content> L1 = {};
+
+    int hit_cnt = 0;
+    for (int it = 0; it < data_cnt; it++) {
+        hit_cnt += L1.parse_income_page(it);
+    }
+
+    // print result
+    std::println(GREEN "The hit count = {}" COLOR_RESET, hit_cnt);
 
     return 0;
 }
+
