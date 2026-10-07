@@ -18,7 +18,7 @@ int main ()
     size_t cache_sz = 0, data_cnt = 0;
     std::cin >> cache_sz >> data_cnt;
 
-    int page_seq[1000] = {};
+    int page_seq[INIT_SIZE] = {};
     for (int n = 0; n < data_cnt; n++)
         std::cin >> page_seq[n];
     #endif
@@ -33,7 +33,7 @@ int main ()
 
     int hit_cnt = 0;
     for (int it = 0; it < data_cnt; it++) {
-        hit_cnt += L1.parse_income_page(it);
+        hit_cnt += L1.parse_income_page(it, slow_get_page(it));
     }
 
     // print result

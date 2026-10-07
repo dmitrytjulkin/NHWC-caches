@@ -3,14 +3,14 @@
 
 #include"LFU.h"
 
-void slow_get_page(keyT key)
+void slow_get_page(int key)
 {
     sleep(4);
 
     return;
 }
 
-void process_page(keyT key)
+void process_page(int key)
 {
     sleep(0.1);
 
