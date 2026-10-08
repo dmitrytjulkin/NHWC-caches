@@ -1,10 +1,8 @@
 #include<stdio.h>
 #include<iostream>
 #include<print>
-#include<list>
-#include<unordered_map>
 
-#include"LFU.h"
+#include"LFU.hpp"
 
 int main ()
 {
@@ -33,11 +31,11 @@ int main ()
 
     int hit_cnt = 0;
     for (int it = 0; it < data_cnt; it++) {
-        hit_cnt += L1.parse_income_page(it, slow_get_page(it));
+        hit_cnt += L1.parse_income_page<void(*)(int)>(it, slow_get_page);
     }
 
     // print result
-    std::println(GREEN "The hit count = {}" COLOR_RESET, hit_cnt);
+    std::cout << GREEN << "The hit count = " << hit_cnt << COLOR_RESET << "\n";
 
     return 0;
 }
