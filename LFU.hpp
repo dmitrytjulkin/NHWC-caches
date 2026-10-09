@@ -31,5 +31,5 @@ struct LFU_content {
     int freq_cnt;
 };
 
-void slow_get_page(int key);
+page_t* slow_get_page(int key);
 void process_page(int key);

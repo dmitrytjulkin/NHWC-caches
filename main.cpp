@@ -31,7 +31,7 @@ int main ()
 
     int hit_cnt = 0;
     for (int it = 0; it < data_cnt; it++) {
-        hit_cnt += L1.parse_income_page<void(*)(int)>(it, slow_get_page);
+        hit_cnt += L1.parse_income_page<page_t*(*)(int)>(it, slow_get_page);
     }
 
     // print result
@@ -39,4 +39,3 @@ int main ()
 
     return 0;
 }
-

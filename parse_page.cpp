@@ -3,11 +3,11 @@
 
 #include"LFU.hpp"
 
-void slow_get_page(int key)
+page_t* slow_get_page(int key)
 {
     sleep(0);
 
-    return;
+    return NULL;
 }
 
 void process_page(int key)

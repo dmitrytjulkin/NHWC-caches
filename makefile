@@ -31,5 +31,4 @@ clean:
 	rm -rf $(BINARY).dSYM \
 	rm -f BINARY
 
-
 .PHONY: all run clean
