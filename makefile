@@ -15,7 +15,7 @@ CC = g++
 
 MAIN = main.cpp
 
-OTHER = parse_page.cpp LFU.cpp
+OTHER = parse_page.cpp LFU.cpp LFU_tests.cpp
 
 BINARY = a.out
 

@@ -18,6 +18,8 @@ struct cache_t {
     using ListIt = typename std::list<cache_content>::iterator;
     std::unordered_map<keyT, ListIt> hash_;
 
+    cache_t(size_t sz) : size(sz) {};
+
     bool is_cache_full();
     void evict_unfrequent_page();
 
@@ -33,3 +35,5 @@ struct LFU_content {
 
 page_t* slow_get_page(int key);
 void process_page(int key);
+
+void LFU_test1();

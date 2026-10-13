@@ -6,10 +6,10 @@
 
 int main ()
 {
-    // read_config();
+    // 1. read_config();
     // ....
 
-    // read_input_data();
+    // 2. read_input_data();
     #if 0
     std::cout << "write down size of cache, count of data, the sequence of data";
 
@@ -19,23 +19,20 @@ int main ()
     int page_seq[INIT_SIZE] = {};
     for (int n = 0; n < data_cnt; n++)
         std::cin >> page_seq[n];
-    #endif
+    
+    int hit_cnt = 0    
+    for (int it = 0; it < data_cnt; it++)
+        hit_cnt += L1.parse_income_page<page_t*(*)(int)>(page_seq[it], slow_get_page);
 
-    #if 1
-    int cache_sz = 2, data_cnt = 0;
-    int cache_requests[] = {1, 2, 1, 3, 2, 5, 2};
-    #endif
-
-    // go through LFU algorithm
-    cache_t<LFU_content> L1 = {};
-
-    int hit_cnt = 0;
-    for (int it = 0; it < data_cnt; it++) {
-        hit_cnt += L1.parse_income_page<page_t*(*)(int)>(it, slow_get_page);
-    }
-
-    // print result
     std::cout << GREEN << "The hit count = " << hit_cnt << COLOR_RESET << "\n";
+    #endif
+
+    // 3. run parse_income_page()
+
+    // 4. out << hit_cnt;
+
+    // OR run tests
+    LFU_test1();
 
     return 0;
 }
