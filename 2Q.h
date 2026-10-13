@@ -3,7 +3,6 @@
 
 #include <list>
 #include <unordered_map>
-#include <unordered_set>
 
 template <typename T, typename KeyT = int>
 struct Content2Q {
@@ -29,7 +28,7 @@ private:
     
     std::unordered_map<KeyT, ListIt> a1_map_;
     std::unordered_map<KeyT, ListIt> am_map_;
-    std::unordered_set<KeyT> a1out_set_;
+    std::unordered_map<KeyT, GhostIt> a1out_map_;
 
 public:
     Cache_2q_t(size_t cache_size) : 

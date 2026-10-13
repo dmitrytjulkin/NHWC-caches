@@ -2,7 +2,6 @@
 
 #include <list>
 #include <unordered_map>
-#include <unordered_set>
 
 template <typename T, typename KeyT>
 bool Cache_2q_t<T, KeyT>::in_a1(KeyT key) const {
@@ -16,7 +15,7 @@ bool Cache_2q_t<T, KeyT>::in_am(KeyT key) const {
 
 template <typename T, typename KeyT>
 bool Cache_2q_t<T, KeyT>::in_a1out(KeyT key) const {
-    return a1out_set_.contains(key);
+    return a1out_map_.find(key) != a1out_map_.end();
 }
 
 template <typename T, typename KeyT>
@@ -50,10 +49,52 @@ template <typename T, typename KeyT>
 void Cache_2q_t<T, KeyT>::insert_to_a1out(KeyT key) {
     if (a1out_full())
     {
-        a1out_set_.erase(a1out_.back());
+        a1out_map_.erase(a1out_.back());
         a1out_.pop_back();
     }
 
     a1out_.push_front(key);
-    a1out_set_.emplace(key);
+    a1out_map_.emplace(key, a1out_.begin());
+}
+
+template <typename T, typename KeyT>
+template <typename F>
+bool Cache_2q_t<T, KeyT>::lookup_update(KeyT key, F slow_get_page) {
+    auto it_am = am_map_.find(key);
+    if (it_am != am_map_.end())
+    {
+        am_.splice(am_.begin(), am_, it_am->second);
+        return true;
+    }
+
+    auto it_a1 = a1_map_.find(key);
+    if (it_a1 != a1_map_.end())
+    {
+        Content2Q<T, KeyT> copy_node = *it_a1->second;
+        a1_.erase(it_a1->second);
+        a1_map_.erase(it_a1);
+        insert_to_am(copy_node);
+        return true;
+    }
+
+    auto it_a1out = a1out_map_.find(key);
+    if (it_a1out != a1out_map_.end())
+    {
+        Content2Q<T, KeyT> node = {
+            .key = key,
+            .page = slow_get_page(key),
+        };
+
+        a1out_.erase(it_a1out->second);
+        a1out_map_.erase(it_a1out);
+        insert_to_am(node);
+        return false;
+    }
+
+    Content2Q<T, KeyT> node = {
+        .key = key,
+        .page = slow_get_page(key),
+    };
+    insert_to_a1(node);
+    return false;
 }
