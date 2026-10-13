@@ -3,7 +3,7 @@
 #include"LFU.hpp"
 
 template <typename cache_content, typename keyT> 
-bool cache_t<cache_content, keyT>::is_cache_full()
+bool LFU_cache_t<cache_content, keyT>::is_cache_full()
 {
     if (cache_.size() < size) return false;
 
@@ -12,7 +12,7 @@ bool cache_t<cache_content, keyT>::is_cache_full()
 
 template <typename cache_content, typename keyT> 
 template <typename F>
-bool cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_page) // now its only for LFU, so it shouldn't belong to cache_t
+bool LFU_cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_page)
 {
     auto cached_page_ptr = hash_.find(key);
     bool cache_is_full = is_cache_full();
@@ -40,7 +40,7 @@ bool cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_page) 
 }
 
 template <typename cache_content, typename keyT>
-void cache_t<cache_content, keyT>::evict_unfrequent_page()
+void LFU_cache_t<cache_content, keyT>::evict_unfrequent_page()
 {
     auto it = cache_.begin();
     auto rare_it = it;
@@ -60,4 +60,4 @@ void cache_t<cache_content, keyT>::evict_unfrequent_page()
     cache_.erase(rare_it);
 }
 
-template bool cache_t<LFU_content, int>::parse_income_page<page_t*(*)(int)>(int, page_t*(*)(int));
+template bool LFU_cache_t<LFU_content, int>::parse_income_page<page_t*(*)(int)>(int, page_t*(*)(int));
