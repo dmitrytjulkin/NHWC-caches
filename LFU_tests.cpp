@@ -1,4 +1,5 @@
 #include<iostream>
+#include"gtest/gtest.h"
 
 #include"LFU.hpp"
 #include"debug.hpp"

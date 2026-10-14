@@ -1,4 +1,4 @@
-FLAGS = -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Wc++14-compat 			 \
+IMPROVED_FLAGS = -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Wc++14-compat 			 \
 		-Wmissing-declarations -Wcast-align -Wcast-qual -Wchar-subscripts				 \
 		-Wconversion -Wctor-dtor-privacy -Wempty-body -Wfloat-equal -Wformat-nonliteral	 \
 		-Wformat-security -Wformat-signedness -Wformat=2 -Winline -Wnon-virtual-dtor	 \
@@ -15,12 +15,12 @@ CC = g++
 
 MAIN = main.cpp
 
-OTHER = parse_page.cpp LFU.cpp LFU_tests.cpp
+OTHER = parse_page.cpp LFU.cpp
 
 BINARY = a.out
 
 all:
-	$(CC) $(MAIN) $(OTHER) $(FLAGS) -o ./$(BINARY)
+	$(CC) $(MAIN) $(OTHER) $(IMPROVED_FLAGS) -o ./$(BINARY)
 
 run: all
 	./$(BINARY)
@@ -32,3 +32,14 @@ clean:
 	rm -f BINARY
 
 .PHONY: all run clean
+
+GTEST_DIR = third_party/googletest
+GTEST_SRCS = $(GTEST_DIR)/src/gtest-all.cc $(GTEST_DIR)/src/gtest_main.cc
+
+TESTS_FLAGS = -Wall -I$(GTEST_DIR)/include -I$(GTEST_DIR)
+
+my_tests: LFU_tests.cpp $(OTHER) $(GTEST_SRCS)
+	$(CC) $(TESTS_FLAGS) $^ -o $@
+
+clean:
+	rm -f my_tests
