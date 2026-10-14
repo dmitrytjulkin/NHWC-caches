@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<unistd.h>
 
-#include"LFU.hpp"
+#include"parse_page.hpp"
 
 page_t* slow_get_page(int key)
 {

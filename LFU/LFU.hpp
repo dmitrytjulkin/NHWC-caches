@@ -3,9 +3,7 @@
 #include<list>
 #include<unordered_map>
 
-const int INIT_SIZE = 1000;
-
-using page_t = char[INIT_SIZE];
+#include"../parse_page.hpp"
 
 template <typename cache_content, typename keyT = int> 
 struct LFU_cache_t {
@@ -30,9 +28,6 @@ struct LFU_content {
     page_t* page;
     int freq_cnt;
 };
-
-page_t* slow_get_page(int key);
-void process_page(int key);
 
 void LFU_test1();
 void LFU_test2();

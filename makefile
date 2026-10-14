@@ -14,7 +14,8 @@ IMPROVED_FLAGS = -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Wc++14-
 CC = g++
 
 MAIN = main.cpp
-OTHER = parse_page.cpp LFU.cpp
+LFU_DIR = LFU
+OTHER = parse_page.cpp $(LFU_DIR)/LFU.cpp
 
 run_nhwc: $(MAIN) $(OTHER)
 	$(CC) $(IMPROVED_FLAGS) $^ -o $@
@@ -24,7 +25,7 @@ GTEST_SRCS = $(GTEST_DIR)/src/gtest-all.cc $(GTEST_DIR)/src/gtest_main.cc
 
 TESTS_FLAGS = -std=c++17 -Wall -I$(GTEST_DIR)/include -I$(GTEST_DIR)
 
-run_tests: LFU_tests.cpp $(OTHER) $(GTEST_SRCS)
+run_tests: $(LFU_DIR)/LFU_tests.cpp $(OTHER) $(GTEST_SRCS)
 	$(CC) $(TESTS_FLAGS) $^ -o $@
 
 clean:

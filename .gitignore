@@ -1,3 +1,5 @@
 a.out
 test*
 a.out.dSYM
+run_nhwc
+run_tests
