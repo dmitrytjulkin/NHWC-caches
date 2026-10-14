@@ -20,13 +20,5 @@ int main ()
 
     // OR run tests:
 
-    #if 0
-    LFU_test1();
-    #endif
-    
-    #if 1
-    LFU_test2();
-    #endif
-
     return 0;
 }

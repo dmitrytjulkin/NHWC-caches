@@ -4,7 +4,7 @@
 #include"LFU.hpp"
 #include"debug.hpp"
 
-void LFU_test1()
+TEST(LFU, Test1)
 {
     int cache_sz = 2, data_cnt = 7;
     int cache_requests[] = {1, 2, 1, 3, 2, 5, 2};
@@ -19,7 +19,7 @@ void LFU_test1()
     std::cout << GREEN << "The hit count = " << hit_cnt << COLOR_RESET << "\n";
 }
 
-void LFU_test2()
+TEST(LFU, Test2)
 {
     int cache_sz = 2, data_cnt = 7;
     int cache_requests[] = {1, 1, 1, 1, 1, 1, 1};

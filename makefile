@@ -14,32 +14,19 @@ IMPROVED_FLAGS = -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Wc++14-
 CC = g++
 
 MAIN = main.cpp
-
 OTHER = parse_page.cpp LFU.cpp
 
-BINARY = a.out
-
-all:
-	$(CC) $(MAIN) $(OTHER) $(IMPROVED_FLAGS) -o ./$(BINARY)
-
-run: all
-	./$(BINARY)
-
-noise:
-
-clean:
-	rm -rf $(BINARY).dSYM \
-	rm -f BINARY
-
-.PHONY: all run clean
+run_nhwc: $(MAIN) $(OTHER)
+	$(CC) $(IMPROVED_FLAGS) $^ -o $@
 
 GTEST_DIR = third_party/googletest
 GTEST_SRCS = $(GTEST_DIR)/src/gtest-all.cc $(GTEST_DIR)/src/gtest_main.cc
 
-TESTS_FLAGS = -Wall -I$(GTEST_DIR)/include -I$(GTEST_DIR)
+TESTS_FLAGS = -std=c++17 -Wall -I$(GTEST_DIR)/include -I$(GTEST_DIR)
 
-my_tests: LFU_tests.cpp $(OTHER) $(GTEST_SRCS)
+run_tests: LFU_tests.cpp $(OTHER) $(GTEST_SRCS)
 	$(CC) $(TESTS_FLAGS) $^ -o $@
 
 clean:
-	rm -f my_tests
+	rm -rf $(BINARY).dSYM \
+	rm -f BINARY
