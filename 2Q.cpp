@@ -69,13 +69,7 @@ bool Cache_2q_t<T, KeyT>::lookup_update(KeyT key, F slow_get_page) {
 
     auto it_a1 = a1_map_.find(key);
     if (it_a1 != a1_map_.end())
-    {
-        Content2Q<T, KeyT> copy_node = *it_a1->second;
-        a1_.erase(it_a1->second);
-        a1_map_.erase(it_a1);
-        insert_to_am(copy_node);
         return true;
-    }
 
     auto it_a1out = a1out_map_.find(key);
     if (it_a1out != a1out_map_.end())
