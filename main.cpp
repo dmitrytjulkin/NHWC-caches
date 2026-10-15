@@ -2,7 +2,7 @@
 #include<iostream>
 #include<print>
 
-#include"LFU.hpp"
+#include"LFU/LFU.hpp"
 
 int main ()
 {
