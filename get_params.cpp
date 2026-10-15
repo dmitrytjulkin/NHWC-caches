@@ -4,7 +4,6 @@
 #include <vector>
 #include <optional>
 
-
 std::optional<InputData> Reading()
 {
     int data_size = 0;
