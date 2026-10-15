@@ -1,5 +1,7 @@
 a.out
 test*
-a.out.dSYM
+
+*.dSYM
 run_nhwc
 run_tests
+*.DS_Store
