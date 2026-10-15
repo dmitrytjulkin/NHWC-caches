@@ -1,21 +1,31 @@
-#include<stdio.h>
-#include<iostream>
-#include<print>
+#include <iostream>
+#include <vector>
+#include <optional>
 
-#include"LFU/LFU.hpp"
+#include "get_params.hpp"
+#include "slow_get_page.hpp"
+#include "2Q/2Q.hpp"
 
-int main ()
+int main()
 {
-    // 1. read_config();
-    // ....
+    int hit_num = 0, miss_num = 0;
+    std::optional<InputData> input = Reading();
 
-    // 2. read_input_data();
+    if (input == std::nullopt)
+        return 1;
 
-    // 3. run parse_income_page()
+    // Cache_2q_t<int> cache(input->cache_size);
 
-    // 4. out << hit_cnt;
+    // for (size_t i = 0; i < input->data.size(); i++)
+    // {
+    //     if (cache.lookup_update(input->data[i], slow_get_page))
+    //         hit_num++;
+    //     else
+    //         miss_num++;
+    // }
 
-    // OR run tests:
+    std::cout << "Number of hits = " << hit_num << "\n";
+    std::cout << "Number of misses = " << miss_num << "\n";
 
     return 0;
 }

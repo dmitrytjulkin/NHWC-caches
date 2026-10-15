@@ -1,0 +1,62 @@
+[
+{
+  "directory": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build",
+  "command": "/usr/bin/c++  -I/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/. -std=gnu++20 -o CMakeFiles/main_app.dir/main.cpp.o -c /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/main.cpp",
+  "file": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/main.cpp",
+  "output": "CMakeFiles/main_app.dir/main.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build",
+  "command": "/usr/bin/c++  -I/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/. -std=gnu++20 -o CMakeFiles/main_app.dir/get_params.cpp.o -c /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/get_params.cpp",
+  "file": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/get_params.cpp",
+  "output": "CMakeFiles/main_app.dir/get_params.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build",
+  "command": "/usr/bin/c++  -I/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/. -std=gnu++20 -o CMakeFiles/main_app.dir/slow_get_page.cpp.o -c /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/slow_get_page.cpp",
+  "file": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/slow_get_page.cpp",
+  "output": "CMakeFiles/main_app.dir/slow_get_page.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build",
+  "command": "/usr/bin/c++  -I/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/. -isystem /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest/include -isystem /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest -std=gnu++20 -o CMakeFiles/run_tests.dir/test_2q.cpp.o -c /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/test_2q.cpp",
+  "file": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/test_2q.cpp",
+  "output": "CMakeFiles/run_tests.dir/test_2q.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build",
+  "command": "/usr/bin/c++  -I/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/. -isystem /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest/include -isystem /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest -std=gnu++20 -o CMakeFiles/run_tests.dir/get_params.cpp.o -c /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/get_params.cpp",
+  "file": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/get_params.cpp",
+  "output": "CMakeFiles/run_tests.dir/get_params.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build",
+  "command": "/usr/bin/c++  -I/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/. -isystem /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest/include -isystem /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest -std=gnu++20 -o CMakeFiles/run_tests.dir/slow_get_page.cpp.o -c /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/slow_get_page.cpp",
+  "file": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/slow_get_page.cpp",
+  "output": "CMakeFiles/run_tests.dir/slow_get_page.cpp.o"
+},
+{
+  "directory": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-build/googlemock",
+  "command": "/usr/bin/c++  -I/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googlemock/include -I/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googlemock -isystem /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest/include -isystem /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest -std=c++20 -Wall -Wshadow -Wundef -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -o CMakeFiles/gmock.dir/src/gmock-all.cc.o -c /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googlemock/src/gmock-all.cc",
+  "file": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googlemock/src/gmock-all.cc",
+  "output": "_deps/googletest-build/googlemock/CMakeFiles/gmock.dir/src/gmock-all.cc.o"
+},
+{
+  "directory": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-build/googlemock",
+  "command": "/usr/bin/c++  -isystem /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googlemock/include -isystem /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googlemock -isystem /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest/include -isystem /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest -std=c++20 -Wall -Wshadow -Wundef -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -o CMakeFiles/gmock_main.dir/src/gmock_main.cc.o -c /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googlemock/src/gmock_main.cc",
+  "file": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googlemock/src/gmock_main.cc",
+  "output": "_deps/googletest-build/googlemock/CMakeFiles/gmock_main.dir/src/gmock_main.cc.o"
+},
+{
+  "directory": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-build/googletest",
+  "command": "/usr/bin/c++  -I/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest/include -I/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest -std=c++20 -Wall -Wshadow -Wundef -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -o CMakeFiles/gtest.dir/src/gtest-all.cc.o -c /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest/src/gtest-all.cc",
+  "file": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest/src/gtest-all.cc",
+  "output": "_deps/googletest-build/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.o"
+},
+{
+  "directory": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-build/googletest",
+  "command": "/usr/bin/c++  -isystem /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest/include -isystem /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest -std=c++20 -Wall -Wshadow -Wundef -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -o CMakeFiles/gtest_main.dir/src/gtest_main.cc.o -c /mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest/src/gtest_main.cc",
+  "file": "/mnt/c/Users/Дима/Desktop/C++/NHWC-caches/build/_deps/googletest-src/googletest/src/gtest_main.cc",
+  "output": "_deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o"
+}
+]
