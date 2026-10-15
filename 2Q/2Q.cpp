@@ -4,21 +4,6 @@
 #include <unordered_map>
 
 template <typename T, typename KeyT>
-bool Cache_2q_t<T, KeyT>::in_a1(KeyT key) const {
-    return a1_map_.find(key) != a1_map_.end();
-}
-
-template <typename T, typename KeyT>
-bool Cache_2q_t<T, KeyT>::in_am(KeyT key) const {
-    return am_map_.find(key) != am_map_.end();
-}
-
-template <typename T, typename KeyT>
-bool Cache_2q_t<T, KeyT>::in_a1out(KeyT key) const {
-    return a1out_map_.find(key) != a1out_map_.end();
-}
-
-template <typename T, typename KeyT>
 void Cache_2q_t<T, KeyT>::insert_to_a1(const Content2Q<T, KeyT>& node) {
     if (a1_full())
     {
