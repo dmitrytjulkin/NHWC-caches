@@ -4,9 +4,6 @@
 
 #include"LFU.hpp"
 
-// TODO work with tests
-// try to implement features from other lectures
-
 int main ()
 {
     // 1. read_config();
