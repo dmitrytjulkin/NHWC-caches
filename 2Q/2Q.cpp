@@ -5,8 +5,7 @@
 
 template <typename T, typename KeyT>
 void Cache_2q_t<T, KeyT>::insert_to_a1(const Content2Q<T, KeyT>& node) {
-    if (a1_full())
-    {
+    if (a1_full()) {
         KeyT victim = a1_.back().key;
         a1_map_.erase(victim);
         a1_.pop_back();
@@ -19,8 +18,7 @@ void Cache_2q_t<T, KeyT>::insert_to_a1(const Content2Q<T, KeyT>& node) {
 
 template <typename T, typename KeyT>
 void Cache_2q_t<T, KeyT>::insert_to_am(const Content2Q<T, KeyT>& node) {
-    if (am_full())
-    {
+    if (am_full()) {
         KeyT victim = am_.back().key;
         am_map_.erase(victim);
         am_.pop_back();
@@ -32,8 +30,7 @@ void Cache_2q_t<T, KeyT>::insert_to_am(const Content2Q<T, KeyT>& node) {
 
 template <typename T, typename KeyT>
 void Cache_2q_t<T, KeyT>::insert_to_a1out(KeyT key) {
-    if (a1out_full())
-    {
+    if (a1out_full()) {
         a1out_map_.erase(a1out_.back());
         a1out_.pop_back();
     }
@@ -46,8 +43,7 @@ template <typename T, typename KeyT>
 template <typename F>
 bool Cache_2q_t<T, KeyT>::lookup_update(KeyT key, F slow_get_page) {
     auto it_am = am_map_.find(key);
-    if (it_am != am_map_.end())
-    {
+    if (it_am != am_map_.end()) {
         am_.splice(am_.begin(), am_, it_am->second);
         return true;
     }
@@ -57,8 +53,7 @@ bool Cache_2q_t<T, KeyT>::lookup_update(KeyT key, F slow_get_page) {
         return true;
 
     auto it_a1out = a1out_map_.find(key);
-    if (it_a1out != a1out_map_.end())
-    {
+    if (it_a1out != a1out_map_.end()) {
         Content2Q<T, KeyT> node = {
             .key = key,
             .page = slow_get_page(key),
