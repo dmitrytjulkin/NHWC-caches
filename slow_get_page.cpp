@@ -2,5 +2,5 @@
 
 int slow_get_page(int key)
 {
-    return key;
+    return 0;
 }

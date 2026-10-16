@@ -15,12 +15,13 @@
 TEST(LFU, Test1)
 {
     int cache_sz = 2, data_cnt = 7;
-    int cache_requests[] = {1, 2, 1, 3, 2, 5, 2};
+    int cache_requests[] = {1, 3, 1, 9, 3, 8, 3};
 
     COUNT_HITS;
 
     EXPECT_EQ(hit_cnt, 1);
 }
+
 
 TEST(LFU, Test2)
 {

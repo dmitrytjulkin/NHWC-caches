@@ -28,6 +28,6 @@ struct LFU_cache_t {
 template <typename page_t>
 struct LFU_content {
     int key;
-    page_t* page;
+    page_t page;
     int freq_cnt;
 };

@@ -1,7 +1,7 @@
 #include<iostream>
 
-#include"../debug.hpp"
 #include"LFU.hpp"
+#include"../debug.hpp"
 
 template <typename cache_content, typename keyT> 
 bool LFU_cache_t<cache_content, keyT>::is_cache_full()
@@ -16,12 +16,13 @@ template <typename F>
 bool LFU_cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_page)
 {
     auto cached_page_ptr = hash_.find(key);
+        
     bool cache_is_full = is_cache_full();
 
     if (cached_page_ptr != hash_.end()) {
         cache_.splice(cache_.begin(), cache_, cached_page_ptr->second);
         (cache_.begin()->freq_cnt)++;
-
+        
         // process_page(key);
 
         return true;
@@ -33,10 +34,10 @@ bool LFU_cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_pa
         cache_.erase(rare_it);
     }
 
-    LFU_content<int> newpage = {slow_get_page(key), NULL, 1}; // page is not just NULL
+    LFU_content<int> newpage = {key, slow_get_page(key), 1}; 
     cache_.push_front(newpage);
     hash_.emplace(key, cache_.begin());
-    
+
     // process_page(key);
 
     return false;

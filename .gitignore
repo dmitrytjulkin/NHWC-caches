@@ -6,3 +6,6 @@ run_nhwc
 run_tests
 *.DS_Store
 build
+
+debug.cpp
+debug.hpp
