@@ -3,6 +3,7 @@
 
 #include <list>
 #include <unordered_map>
+#include <algorithm>
 
 template <typename T, typename KeyT = int>
 struct ContentARC {

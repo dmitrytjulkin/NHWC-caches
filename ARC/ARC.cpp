@@ -18,7 +18,7 @@ void Cache_arc_t<T, KeyT>::insert_to_b2(KeyT key) {
 
 template <typename T, typename KeyT>
 void Cache_arc_t<T, KeyT>::replace(KeyT key) {
-    if ((t1_.size() > p_) || ((t1_.size() == p_) && in_b2(key))) {
+    if (!t1_.empty() && ((t1_.size() > p_) || ((t1_.size() == p_) && in_b2(key)))) {
         KeyT victim_key = t1_.back().key;
         t1_map_.erase(victim_key);
         t1_.pop_back();
@@ -83,18 +83,19 @@ bool Cache_arc_t<T, KeyT>::lookup_update(KeyT key, F slow_get_page) {
     }
 
     else if (in_b2(key)) {
+        size_t p_temp = p_;
         if (b1_.size() < b2_.size())
-            p_++;
+            p_--;
         else
-            p_ += (b1_.size()/b2_.size());
+            p_ -= (b1_.size()/b2_.size());
 
-        p_ = std::min(p_, cache_size_);
+        p_ = (p_temp > p_) ? p_ : 0;
 
         replace(key);
 
-        auto it = b1_map_.find(key);
-        b1_.erase(it->second);
-        b1_map_.erase(it);
+        auto it = b2_map_.find(key);
+        b2_.erase(it->second);
+        b2_map_.erase(it);
         ContentARC<T, KeyT> node = {
             .key = key,
             .page = slow_get_page(key)};
@@ -102,6 +103,36 @@ bool Cache_arc_t<T, KeyT>::lookup_update(KeyT key, F slow_get_page) {
 
         return false;
     }
+
+
+    if (t1_.size() + b1_.size() == cache_size_) {
+        if (t1_.size() < cache_size_)
+        {
+            KeyT victim_key = b1_.back();
+            b1_map_.erase(b1_map_.find(victim_key));
+            b1_.pop_back();
+            replace(key);
+        } 
+        else {
+            KeyT victim_key = t1_.back().key;
+            t1_map_.erase(t1_map_.find(victim_key));
+            t1_.pop_back();
+        }
+    }
+    else if (t1_.size() + b1_.size() + t2_.size() + b2_.size() >= cache_size_) {
+        if (t1_.size() + b1_.size() + t2_.size() + b2_.size() == 2*cache_size_) {
+            KeyT victim_key = b2_.back();
+            b2_map_.erase(b2_map_.find(victim_key));
+            b2_.pop_back();
+        }
+        
+        replace(key);
+    }
+
+    ContentARC<T, KeyT> node = {
+            .key = key,
+            .page = slow_get_page(key)};
+    insert_to_t1(node);
 
     return false;
 }

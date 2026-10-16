@@ -5,4 +5,4 @@ test*
 run_nhwc
 run_tests
 *.DS_Store
-build
+arc_testing

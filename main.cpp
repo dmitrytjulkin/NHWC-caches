@@ -4,7 +4,7 @@
 
 #include "get_params.hpp"
 #include "slow_get_page.hpp"
-#include "2Q/2Q.hpp"
+#include "ARC.hpp"
 
 int main()
 {
@@ -14,7 +14,7 @@ int main()
     if (input == std::nullopt)
         return 1;
 
-    // Cache_2q_t<int> cache(input->cache_size);
+    // Cache_arc_t<int> cache(input->cache_size);
 
     // for (size_t i = 0; i < input->data.size(); i++)
     // {
