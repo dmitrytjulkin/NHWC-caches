@@ -1,5 +1,3 @@
-#include<stdio.h>
-
 #include"LFU.hpp"
 
 template <typename cache_content, typename keyT> 
@@ -21,7 +19,7 @@ bool LFU_cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_pa
         cache_.splice(cache_.begin(), cache_, cached_page_ptr->second);
         (cache_.begin()->freq_cnt)++;
         
-        process_page(key);
+        // process_page(key);
 
         return true;
     }
@@ -30,11 +28,11 @@ bool LFU_cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_pa
 
     if (cache_is_full) evict_unfrequent_page();
 
-    LFU_content newpage = {key, slow_get_page(key), 1};
+    LFU_content<int> newpage = {slow_get_page(key), NULL, 1}; // page is not just NULL
     cache_.push_front(newpage);
     hash_.emplace(key, cache_.begin());
     
-    process_page(key);
+    // process_page(key);
 
     return false;
 }
@@ -60,4 +58,4 @@ void LFU_cache_t<cache_content, keyT>::evict_unfrequent_page()
     cache_.erase(rare_it);
 }
 
-template bool LFU_cache_t<LFU_content, int>::parse_income_page<page_t*(*)(int)>(int, page_t*(*)(int));
+template bool LFU_cache_t<LFU_content<PAGE_T>, int>::parse_income_page<PAGE_T(*)(int)>(int, PAGE_T(*)(int));
