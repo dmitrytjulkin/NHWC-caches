@@ -2,7 +2,9 @@
 #include"gtest/gtest.h"
 
 #include"LFU.hpp"
+#if 0
 #include"../debug.hpp"
+#endif
 
 #define COUNT_HITS                                  \
     LFU_cache_t<LFU_content<PAGE_T>> L1(cache_sz);  \

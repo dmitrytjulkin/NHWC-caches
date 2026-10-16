@@ -15,7 +15,6 @@ CC = g++
 
 MAIN = main.cpp
 LFU_DIR = LFU
-DEBUG = debug.cpp
 OTHER = slow_get_page.cpp $(LFU_DIR)/LFU.cpp
 
 run_nhwc: $(MAIN) $(OTHER)
@@ -26,7 +25,7 @@ GTEST_SRCS = $(GTEST_DIR)/src/gtest-all.cc $(GTEST_DIR)/src/gtest_main.cc
 
 TESTS_FLAGS = -std=c++17 -Wall -I$(GTEST_DIR)/include -I$(GTEST_DIR)
 
-run_tests: $(LFU_DIR)/LFU_tests.cpp $(DEBUG) $(OTHER) $(GTEST_SRCS)
+run_tests: $(LFU_DIR)/LFU_tests.cpp $(OTHER) $(GTEST_SRCS)
 	$(CC) $(TESTS_FLAGS) $^ -o $@
 
 clean:

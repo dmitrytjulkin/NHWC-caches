@@ -1,7 +1,9 @@
 #include<iostream>
 
 #include"LFU.hpp"
+#if 0
 #include"../debug.hpp"
+#endif
 
 template <typename cache_content, typename keyT> 
 bool LFU_cache_t<cache_content, keyT>::is_cache_full()
