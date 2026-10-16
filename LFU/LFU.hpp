@@ -19,7 +19,7 @@ struct LFU_cache_t {
 
     bool is_cache_full();
 
-    void evict_unfrequent_page();
+    auto find_unfrequent_page();
 
     template <typename F> 
     bool parse_income_page(keyT key, F slow_get_page);

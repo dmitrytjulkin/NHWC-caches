@@ -1,3 +1,6 @@
+#include<iostream>
+
+#include"../debug.hpp"
 #include"LFU.hpp"
 
 template <typename cache_content, typename keyT> 
@@ -18,15 +21,17 @@ bool LFU_cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_pa
     if (cached_page_ptr != hash_.end()) {
         cache_.splice(cache_.begin(), cache_, cached_page_ptr->second);
         (cache_.begin()->freq_cnt)++;
-        
+
         // process_page(key);
 
         return true;
     }
 
-    if (cache_is_full && cached_page_ptr != hash_.end()) return false;
-
-    if (cache_is_full) evict_unfrequent_page();
+    auto rare_it = find_unfrequent_page();
+    if (cache_is_full && rare_it != cache_.end()) {
+        hash_.erase(rare_it->key);
+        cache_.erase(rare_it);
+    }
 
     LFU_content<int> newpage = {slow_get_page(key), NULL, 1}; // page is not just NULL
     cache_.push_front(newpage);
@@ -38,7 +43,7 @@ bool LFU_cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_pa
 }
 
 template <typename cache_content, typename keyT>
-void LFU_cache_t<cache_content, keyT>::evict_unfrequent_page()
+auto LFU_cache_t<cache_content, keyT>::find_unfrequent_page()
 {
     auto it = cache_.begin();
     auto rare_it = it;
@@ -47,15 +52,13 @@ void LFU_cache_t<cache_content, keyT>::evict_unfrequent_page()
     while (it != cache_.end()) {
         it++;
         
-        if (it->freq_cnt < smallest_freq) {
+        if (it->freq_cnt <= smallest_freq) {
             smallest_freq = it->freq_cnt;
             rare_it = it;
         }
     }
 
-    hash_.erase(rare_it->key);
-
-    cache_.erase(rare_it);
+    return (rare_it);
 }
 
 template bool LFU_cache_t<LFU_content<PAGE_T>, int>::parse_income_page<PAGE_T(*)(int)>(int, PAGE_T(*)(int));
