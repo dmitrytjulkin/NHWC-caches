@@ -42,23 +42,22 @@ void Cache_2q_t<T, KeyT>::insert_to_a1out(KeyT key) {
 template <typename T, typename KeyT>
 template <typename F>
 bool Cache_2q_t<T, KeyT>::lookup_update(KeyT key, F slow_get_page) {
-    auto it_am = am_map_.find(key);
-    if (it_am != am_map_.end()) {
+    if (in_am(key)) {
+        auto it_am = am_map_.find(key);
         am_.splice(am_.begin(), am_, it_am->second);
         return true;
     }
 
-    auto it_a1 = a1_map_.find(key);
-    if (it_a1 != a1_map_.end())
+    if (in_a1(key))
         return true;
 
-    auto it_a1out = a1out_map_.find(key);
-    if (it_a1out != a1out_map_.end()) {
+    if (in_a1out(key)) {
         Content2Q<T, KeyT> node = {
             .key = key,
             .page = slow_get_page(key),
         };
 
+        auto it_a1out = a1out_map_.find(key);
         a1out_.erase(it_a1out->second);
         a1out_map_.erase(it_a1out);
         insert_to_am(node);
