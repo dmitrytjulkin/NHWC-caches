@@ -15,7 +15,7 @@ CC = g++
 
 MAIN = main.cpp
 LFU_DIR = LFU
-OTHER = parse_page.cpp $(LFU_DIR)/LFU.cpp
+OTHER = slow_get_page.cpp $(LFU_DIR)/LFU.cpp
 
 run_nhwc: $(MAIN) $(OTHER)
 	$(CC) $(IMPROVED_FLAGS) $^ -o $@

@@ -3,7 +3,9 @@
 #include<list>
 #include<unordered_map>
 
-#include"../parse_page.hpp"
+#include"../slow_get_page.hpp"
+
+using PAGE_T = int;
 
 template <typename cache_content, typename keyT = int> 
 struct LFU_cache_t {
@@ -17,17 +19,15 @@ struct LFU_cache_t {
 
     bool is_cache_full();
 
-    void evict_unfrequent_page();
+    auto find_unfrequent_page();
 
     template <typename F> 
     bool parse_income_page(keyT key, F slow_get_page);
 };
 
+template <typename page_t>
 struct LFU_content {
     int key;
-    page_t* page;
+    page_t page;
     int freq_cnt;
 };
-
-void LFU_test1();
-void LFU_test2();
