@@ -68,6 +68,39 @@ bool Cache_arc_t<T, KeyT>::lookup_update(KeyT key, F slow_get_page) {
             p_ += (b2_.size()/b1_.size());
 
         p_ = std::min(p_, cache_size_);
+
+        replace(key);
+
+        auto it = b1_map_.find(key);
+        b1_.erase(it->second);
+        b1_map_.erase(it);
+        ContentARC<T, KeyT> node = {
+            .key = key,
+            .page = slow_get_page(key)};
+        insert_to_t2(node);
+
+        return false;
+    }
+
+    else if (in_b2(key)) {
+        if (b1_.size() < b2_.size())
+            p_++;
+        else
+            p_ += (b1_.size()/b2_.size());
+
+        p_ = std::min(p_, cache_size_);
+
+        replace(key);
+
+        auto it = b1_map_.find(key);
+        b1_.erase(it->second);
+        b1_map_.erase(it);
+        ContentARC<T, KeyT> node = {
+            .key = key,
+            .page = slow_get_page(key)};
+        insert_to_t2(node);
+
+        return false;
     }
 
     return false;
