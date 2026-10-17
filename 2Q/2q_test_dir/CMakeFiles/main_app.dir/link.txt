@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/main_app.dir/main.cpp.o CMakeFiles/main_app.dir/get_params.cpp.o CMakeFiles/main_app.dir/slow_get_page.cpp.o -o main_app 

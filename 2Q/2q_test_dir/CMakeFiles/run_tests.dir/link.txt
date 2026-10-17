@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/run_tests.dir/test_2q.cpp.o CMakeFiles/run_tests.dir/get_params.cpp.o CMakeFiles/run_tests.dir/slow_get_page.cpp.o -o run_tests  lib/libgtest_main.a lib/libgtest.a 
