@@ -2,44 +2,45 @@
 
 #include<list>
 #include<unordered_map>
+#include<optional>
 
 #include"../slow_get_page.hpp"
+
+using PAGE_T = int;
+
+enum page_status {
+    LIR,
+    HIR
+};
 
 template <typename page_t, typename keyT = int>
 struct LIRS_content {
     keyT key;
     page_t page;
-};
 
-enum page_status {
-    LIR,
-    res_HIR,
-    non_res_HIR
-};
+    page_status status = HIR;
+    
+    using cache_list_t = typename std::list<LIRS_content>;
+    using s_list_t = typename cache_list_t::iterator;
 
-template <typename keyT = int>
-struct s_content {
-    keyT key;
-    page_status page;
+    std::optional<std::list<s_list_t>::iterator> s_it = std::nullopt;
+    std::optional<std::list<s_list_t>::iterator> q_it = std::nullopt;
 };
 
 template <typename cache_content, typename keyT = int> 
 struct LIRS_cache_t {
     size_t cache_size;
     LFU_cache_t(size_t sz) : cache_size(sz) {};
-
-    std::list<cache_content> cache_;
-
-    std::list<s_content> s_stack;
-
-    using s_it = typename std::list<s_content>::iterator;
-    std::list<s_it> q_list;
-
+    
     size_t q_size{(cache_size + 99) / 100}; // 1% of size (rounded up)
     size_t s_size{cache_size - q_size};
 
-    using list_it = typename std::list<cache_content>::iterator;
-    std::unordered_map<keyT, list_it> hash_;
+    LIRS_content::cache_list_t cache_list;
+    LIRS_content::s_list_t s_stack;
+    std::list<cache_list_t::iterator> q_list;
+
+    using cache_it = typename cache_list_t::iterator;
+    std::unordered_map<keyT, cache_it> cache_hash;
 
     bool is_cache_full();
 
