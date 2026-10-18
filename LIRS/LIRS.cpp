@@ -21,36 +21,11 @@ bool LIRS_cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_p
         
     // bool cache_is_full = is_cache_full();
 
-    if (x_cache_ptr == cache_hash.end()) {      // there was no 'x' -> miss
-        parse_new_page(key, slow_get_page);
+    if (x_cache_ptr == cache_hash.end())      // there was no 'x' -> miss
+        return parse_new_page(key, slow_get_page);
 
-        // cache_list.erase(*q_list.begin();); 
-        // q_list.erase(q_list.begin());           // delete old resHIR
-
-        // LIRS_content<PAGE_T> newpage = {key, slow_get_page(key)};
-        // cache_list.push_front(newpage);         // load x page
-        // s_stack.push_front(cache_list.begin());
-        // q_list.push_back(cache_list.begin());   // x -> res_HIR
-
-        // return false
-    }
-
-    if (x_cache_ptr->second.status = HIR && x_cache_ptr->second.q_it = std::nullopt) { // still a miss
-        x_cache_ptr->second.status = LIR;
-
-        s_stack.splice(s_stack.begin(), s_stack, x_cache_ptr->second.s_it);
-
-        auto dying_LIR = *s_stack.back();
-        q_list.push_back(dying_LIR);
-        dying_LIR->status = HIR;
-        s_stack.erase(s_stack.back());  // s_bottom -> res_HIR
-
-        prune_stack();
-
-        // process_page(key);
-
-        return false;
-    }
+    if (x_cache_ptr->second.status = HIR && x_cache_ptr->second.q_it = std::nullopt) // still a miss
+        return parse_nonresHIR_in_s(key, slow_get_page);
 
     auto x_s_ptr = x_cache_ptr->second.s_it;
 
@@ -100,6 +75,26 @@ bool LIRS_cache_t<cache_content, keyT>::parse_new_page(keyT key, F slow_get_page
     q_list.push_back(cache_list.begin());   // x -> res_HIR
 
     return false
+}
+
+template <typename cache_content, typename keyT>
+template <typename F>
+bool LIRS_cache_t<cache_content, keyT>::parse_nonresHIR_in_s(keyT key, F slow_get_page)
+{
+    x_cache_ptr->second.status = LIR;
+
+    s_stack.splice(s_stack.begin(), s_stack, x_cache_ptr->second.s_it);
+
+    auto dying_LIR = *s_stack.back();
+    q_list.push_back(dying_LIR);
+    dying_LIR->status = HIR;
+    s_stack.erase(s_stack.back());  // s_bottom -> res_HIR
+
+    prune_stack();
+
+    // process_page(key);
+
+    return false;
 }
 
 

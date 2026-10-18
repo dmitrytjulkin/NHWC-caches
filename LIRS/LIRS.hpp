@@ -54,7 +54,7 @@ struct LIRS_cache_t {
 private:
     template <typename F>
     bool parse_new_page(keyT key, F slow_get_page);
+    bool parse_nonresHIR_in_s(keyT key, F slow_get_page);
 
-    
 
 };
