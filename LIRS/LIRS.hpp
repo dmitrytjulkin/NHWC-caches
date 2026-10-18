@@ -50,4 +50,11 @@ struct LIRS_cache_t {
     bool parse_income_page(keyT key, F slow_get_page);
 
     void prune_stack ();
+
+private:
+    template <typename F>
+    bool parse_new_page(keyT key, F slow_get_page);
+
+    
+
 };
