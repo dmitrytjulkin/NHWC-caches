@@ -17,49 +17,26 @@ template <typename cache_content, typename keyT>
 template <typename F>
 bool LIRS_cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_page)
 {
-    auto x_cache_ptr = cache_hash.find(key);
-        
-    // bool cache_is_full = is_cache_full();
+    auto cached_x = cache_hash.find(key);
 
-    if (x_cache_ptr == cache_hash.end())      // there was no 'x' -> miss
-        return parse_new_page(key, slow_get_page);
+    if (cached_x == cache_hash.end())      // there was no 'x' -> miss
+        return parse_new_page(cached_x, key, slow_get_page);
 
-    if (x_cache_ptr->second.status = HIR && x_cache_ptr->second.q_it = std::nullopt) // still a miss
-        return parse_nonresHIR_in_s(key, slow_get_page);
+    if (cached_x->second.status = HIR && cached_x->second.q_it = std::nullopt) // still a miss
+        return parse_nonresHIR_in_s(cached_x, key, slow_get_page);
 
-    auto x_s_ptr = x_cache_ptr->second.s_it;
+    auto x_s_ptr = cached_x->second.s_it;
 
-    if (x_s_ptr != s_hash.end() && x_s_ptr->second.status == LIR) { // x = LIR
-        s_stack.splice(s_stack.begin(), s_stack, x_s_ptr->second);
+    if (x_s_ptr->second.status == LIR) { // x = LIR
+        s_stack.splice(s_stack.begin(), s_stack, x_s_ptr);
         prune_stack();
+
+        // process_page(key);
 
         return true;
     }
 
-    // x = HIR
-
-    if (x_s_ptr != s_hash.end()) {
-        x_s_ptr->second.status = LIR;
-
-
-    }
-
-    s_stack.splice(s_stack.begin(), s_stack, x_s_ptr->second);
-
-
-    auto rare_it = find_unfrequent_page();
-    if (cache_is_full && rare_it != cache_.end()) {
-        hash_.erase(rare_it->key);
-        cache_.erase(rare_it);
-    }
-
-    LFU_content<int> newpage = {key, slow_get_page(key)}; 
-    cache_.push_front(newpage);
-    hash_.emplace(key, cache_.begin());
-
-    // process_page(key);
-
-    return true;
+    return parse_resHIR(cached_x, key, slow_get_page);
 }
 
 template <typename cache_content, typename keyT>
@@ -79,11 +56,11 @@ bool LIRS_cache_t<cache_content, keyT>::parse_new_page(keyT key, F slow_get_page
 
 template <typename cache_content, typename keyT>
 template <typename F>
-bool LIRS_cache_t<cache_content, keyT>::parse_nonresHIR_in_s(keyT key, F slow_get_page)
+bool LIRS_cache_t<cache_content, keyT>::parse_nonresHIR_in_s(hash_it cached_x, keyT key, F slow_get_page)
 {
-    x_cache_ptr->second.status = LIR;
+    cached_x->second.status = LIR;
 
-    s_stack.splice(s_stack.begin(), s_stack, x_cache_ptr->second.s_it);
+    s_stack.splice(s_stack.begin(), s_stack, cached_x->second.s_it);
 
     auto dying_LIR = *s_stack.back();
     q_list.push_back(dying_LIR);
@@ -97,26 +74,50 @@ bool LIRS_cache_t<cache_content, keyT>::parse_nonresHIR_in_s(keyT key, F slow_ge
     return false;
 }
 
-
-
 template <typename cache_content, typename keyT>
-auto LFU_cache_t<cache_content, keyT>::find_unfrequent_page()
+template <typename F>
+bool LIRS_cache_t<cache_content, keyT>::parse_resHIR(hash_it cached_x, keyT key, F slow_get_page)
 {
-    auto it = cache_.begin();
-    auto rare_it = it;
-    int smallest_freq = it->freq_cnt;
+    if (cached_x->second.s_it != std::nullopt) { // x in s
+        s_stack.splice(s_stack.begin(), s_stack, x_s_ptr);
 
-    while (it != cache_.end()) {
-        it++;
+        cached_x->second.status = LIR;
+
+        q_list.erase(cached_x->second.q_it);
         
-        if (it->freq_cnt <= smallest_freq) {
-            smallest_freq = it->freq_cnt;
-            rare_it = it;
-        }
+        auto dying_LIR = *s_stack.back();
+        q_list.push_back(dying_LIR);
+        dying_LIR->status = HIR;
+        s_stack.erase(s_stack.back());  // s_bottom -> res_HIR
+
+        prune_stack();
+    } else { // x not in s
+        s_stack.push_front(cached_x->second);
+
+        q_list.push_back(cached_x->second);
     }
 
-    return (rare_it);
+    return true;
 }
+
+// template <typename cache_content, typename keyT>
+// auto LFU_cache_t<cache_content, keyT>::find_unfrequent_page()
+// {
+//     auto it = cache_.begin();
+//     auto rare_it = it;
+//     int smallest_freq = it->freq_cnt;
+
+//     while (it != cache_.end()) {
+//         it++;
+        
+//         if (it->freq_cnt <= smallest_freq) {
+//             smallest_freq = it->freq_cnt;
+//             rare_it = it;
+//         }
+//     }
+
+//     return (rare_it);
+// }
 
 template bool LIRS_cache_t<LIRS_content<PAGE_T>, int>::parse_income_page<PAGE_T(*)(int)>(int, PAGE_T(*)(int));
 template bool LIRS_cache_t<LIRS_content<PAGE_T>, int>::parse_new_page<PAGE_T(*)(int)>(int, PAGE_T(*)(int));
