@@ -5,14 +5,6 @@
 #include"../debug.hpp"
 #endif
 
-// template <typename cache_content, typename keyT> 
-// bool LFU_cache_t<cache_content, keyT>::is_cache_full()
-// {
-//     if (cache_.size() < size) return false;
-
-//     return true;
-// }
-
 template <typename cache_content, typename keyT> 
 template <typename F>
 bool LIRS_cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_page)
@@ -114,6 +106,24 @@ void LIRS_cache_t<cache_content, keyT>::move_s_bottom_to_q()
     dying_LIR->status = HIR;
     
     s_stack.erase(s_stack.back());  // s_bottom -> res_HIR
+}
+
+template <typename cache_content, typename keyT>
+void LIRS_cache_t<cache_content, keyT>::prune_stack()
+{
+    while (!s_stack.empty() && s_stack.back()->status == HIR) {
+        auto s_bottom_it = s_stack.back();
+
+        s_stack.pop_back();
+
+        if (s_bottom_it->q_list == std::nullopt) {
+            cache_hash.erase(s_bottom_it->key);
+            cache_list.erase(*s_bottom_it);
+        } else {
+            s_bottom_it->s_it = std::nullopt;
+        }
+
+    }
 }
 
 template bool LIRS_cache_t<LIRS_content<PAGE_T>, int>::parse_new_page<PAGE_T(*)(int)>(int, PAGE_T(*)(int));
