@@ -118,7 +118,9 @@ void LIRS_cache_t<cache_content, keyT>::prune_stack()
 
         if (s_bottom_it->q_list == std::nullopt) {
             cache_hash.erase(s_bottom_it->key);
+            
             cache_list.erase(*s_bottom_it);
+        
         } else {
             s_bottom_it->s_it = std::nullopt;
         }
@@ -126,6 +128,7 @@ void LIRS_cache_t<cache_content, keyT>::prune_stack()
     }
 }
 
+template bool LIRS_cache_t<LIRS_content<PAGE_T>, int>::parse_income_page<PAGE_T(*)(int)>(int, PAGE_T(*)(int));
 template bool LIRS_cache_t<LIRS_content<PAGE_T>, int>::parse_new_page<PAGE_T(*)(int)>(int, PAGE_T(*)(int));
 template bool LIRS_cache_t<LIRS_content<PAGE_T>, int>::parse_nonresHIR_in_s<PAGE_T(*)(int)>(cache_it, int, PAGE_T(*)(int));
 template bool LIRS_cache_t<LIRS_content<PAGE_T>, int>::parse_resHIR<PAGE_T(*)(int)>(cache_it, int, PAGE_T(*)(int));
