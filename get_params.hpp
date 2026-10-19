@@ -3,9 +3,11 @@
 
 #include <vector>
 #include <optional>
+#include <string>
 
 struct InputData {
-    int cache_size = 0;
+    int total_cache_size = 0;
+    std::vector<std::string> levels_types;
     std::vector<int> data;
 };
 

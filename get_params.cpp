@@ -6,17 +6,30 @@
 
 std::optional<InputData> Reading()
 {
-    int data_size = 0;
+    int cache_num = 0, data_size = 0;
     InputData input{};
-    std::cout << "Enter cache size and data size: ";
-    if (!(std::cin >> input.cache_size >> data_size)) {
-        std::cerr << "ERROR: couldn’t read the data.\n";
+    if (!(std::cin >> cache_num)) {
+        std::cerr << "ERROR: couldn’t read the number of caches.\n";
+        return std::nullopt;
+    }
+
+    input.levels_types.resize(cache_num);
+
+    for (int i = 0; i < cache_num; i++)
+    {
+        if (!(std::cin >> input.levels_types[i])) {
+            std::cerr << "ERROR: couldn’t read the data.\n";
+            return std::nullopt;
+        }
+    }
+
+    if (!(std::cin >> input.total_cache_size >> data_size)) {
+        std::cerr << "ERROR: couldn’t read sizes.\n";
         return std::nullopt;
     }
 
     input.data.resize(data_size);
 
-    std::cout << "Enter data: ";
     for (int i = 0; i < data_size; ++i) {
         if (!(std::cin >> input.data[i])) {
             if (std::cin.eof())
