@@ -41,7 +41,6 @@ struct LIRS_cache_t {
 
     using cache_it = typename cache_list_t::iterator;
     std::unordered_map<keyT, cache_it> cache_hash;
-    using hash_it = std::unordered_map<keyT, cache_it>::iterator;
 
     bool is_cache_full();
 
@@ -57,8 +56,10 @@ private:
     bool parse_new_page(keyT key, F slow_get_page);
 
     template <typename F>
-    bool parse_nonresHIR_in_s(hash_it cached_x, keyT key, F slow_get_page);
+    bool parse_nonresHIR_in_s(cache_it x_data, keyT key, F slow_get_page);
     
     template <typename F>
-    bool parse_resHIR(hash_it cached_x, keyT key, F slow_get_page);
+    bool parse_resHIR(cache_it x_data, keyT key, F slow_get_page);
+
+    void move_s_bottom_to_q();
 };
