@@ -18,7 +18,8 @@ MAIN = main.cpp
 LFU_DIR = LFU
 LIRS_DIR = LIRS
 
-OTHER = slow_get_page.cpp $(LFU_DIR)/LFU.cpp 
+OTHER = slow_get_page.cpp $(LFU_DIR)/LFU.cpp
+HEADERS = $(LIRS_DIR)/LIRS.hpp
 
 TESTS = $(LIRS_DIR)/LIRS_test.cpp
 
@@ -30,8 +31,8 @@ GTEST_SRCS = $(GTEST_DIR)/src/gtest-all.cc $(GTEST_DIR)/src/gtest_main.cc
 
 TESTS_FLAGS = -std=c++17 -Wall -I$(GTEST_DIR)/include -I$(GTEST_DIR)
 
-run_tests: $(TESTS) $(OTHER) $(GTEST_SRCS)
-	$(CC) $(TESTS_FLAGS) $^ -o $@
+run_tests: $(TESTS) $(OTHER) $(GTEST_SRCS) $(HEADERS)
+	$(CC) $(TESTS_FLAGS) $(TESTS) $(OTHER) $(GTEST_SRCS) -o $@
 
 clean:
 	rm -rf $(BINARY).dSYM \

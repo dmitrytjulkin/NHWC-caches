@@ -21,10 +21,10 @@ struct LIRS_content {
     page_status status = HIR;
     
     using cache_list_t = typename std::list<LIRS_content>;
-    using s_list_t = typename cache_list_t::iterator;
+    using s_list_elem_t = typename cache_list_t::iterator;
 
-    std::optional<typename std::list<s_list_t>::iterator> s_it = std::nullopt;
-    std::optional<typename std::list<s_list_t>::iterator> q_it = std::nullopt;
+    std::optional<typename std::list<s_list_elem_t>::iterator> s_it = std::nullopt;
+    std::optional<typename std::list<s_list_elem_t>::iterator> q_it = std::nullopt;
 };
 
 template <typename cache_content, typename keyT = int> 
@@ -35,18 +35,18 @@ struct LIRS_cache_t {
     size_t q_size{(cache_size + 99) / 100}; // 1% of size (rounded up)
     size_t s_size{cache_size - q_size};
 
-    using cache_list_t = typename LIRS_content<PAGE_T, keyT>::cache_list_t;
+    using cache_list_t = typename std::list<LIRS_content<PAGE_T, keyT>>;
     using cache_it = typename cache_list_t::iterator;
 
     std::list<cache_content> cache_list;
     std::list<cache_it> s_stack;
     std::list<cache_it> q_list;
 
-    std::unordered_map<keyT, cache_it> cache_hash;
+    using hash_t = typename std::unordered_map<keyT, cache_it>;
+    using hash_it = typename hash_t::iterator;
+    hash_t cache_hash;
 
     bool is_cache_full();
-
-    auto find_unfrequent_page();
 
     template <typename F> 
     bool parse_income_page(keyT key, F slow_get_page);
@@ -58,8 +58,8 @@ private:
     bool parse_new_page(keyT key, F slow_get_page);
 
     template <typename F>
-    bool parse_nonresHIR_in_s(cache_it x_data, keyT key, F slow_get_page);
-    
+    bool parse_nonresHIR_in_s(cache_content x_data, keyT key, F slow_get_page);
+
     template <typename F>
     bool parse_resHIR(cache_it x_data, keyT key, F slow_get_page);
 
@@ -70,19 +70,19 @@ template <typename cache_content, typename keyT>
 template <typename F>
 bool LIRS_cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_page)
 {
-    auto cached_x = cache_hash.find(key);
+    auto x_hash_code = cache_hash.find(key);
 
-    if (cached_x == cache_hash.end())      // there was no 'x' -> miss
+    if (x_hash_code == cache_hash.end())      // there was no 'x' -> miss
         return parse_new_page(key, slow_get_page);
 
-    auto x_data = cached_x->second;
+    cache_content x_data = *x_hash_code->second;
 
-    if (x_data->status == HIR && x_data->q_it == std::nullopt) // still a miss
+    if (x_data.status == HIR && x_data.q_it == std::nullopt) // still a miss
         return parse_nonresHIR_in_s(x_data, key, slow_get_page);
 
-    auto x_s_it = *x_data->s_it; // * - to avoid 
+    auto x_s_it = *x_data.s_it;
 
-    if ((*x_s_it)->status == LIR) { // x = LIR //WTF
+    if ((*x_s_it)->status == LIR) { // x = LIR
         s_stack.splice(s_stack.begin(), s_stack, x_s_it);
         prune_stack();
 
@@ -91,7 +91,7 @@ bool LIRS_cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_p
         return true;
     }
 
-    return parse_resHIR(x_data, key, slow_get_page);
+    return parse_resHIR(x_hash_code->second, key, slow_get_page);
 }
 
 template <typename cache_content, typename keyT>
@@ -111,11 +111,11 @@ bool LIRS_cache_t<cache_content, keyT>::parse_new_page(keyT key, F slow_get_page
 
 template <typename cache_content, typename keyT>
 template <typename F>
-bool LIRS_cache_t<cache_content, keyT>::parse_nonresHIR_in_s(typename LIRS_cache_t<cache_content, keyT>::cache_it x_data, keyT key, F slow_get_page)
+bool LIRS_cache_t<cache_content, keyT>::parse_nonresHIR_in_s(cache_content x_data, keyT key, F slow_get_page)
 {
-    x_data->status = LIR;
+    x_data.status = LIR;
 
-    s_stack.splice(s_stack.begin(), s_stack, *(x_data->s_it));
+    s_stack.splice(s_stack.begin(), s_stack, *(x_data.s_it));
 
     move_s_bottom_to_q();
 

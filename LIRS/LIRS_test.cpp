@@ -13,7 +13,6 @@
     for (int it = 0; it < data_cnt; it++)           \
         hit_cnt += L1.parse_income_page(cache_requests[it], slow_get_page);
 
-
 TEST(LFU, Test1)
 {
     int cache_sz = 2, data_cnt = 7;
