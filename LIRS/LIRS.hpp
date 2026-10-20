@@ -80,10 +80,10 @@ bool LIRS_cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_p
     if (x_data->status == HIR && x_data->q_it == std::nullopt) // still a miss
         return parse_nonresHIR_in_s(x_data, key, slow_get_page);
 
-    auto x_s_ptr = x_data->s_it;
+    auto x_s_it = *x_data->s_it; // * - to avoid 
 
-    if (x_s_ptr->status == LIR) { // x = LIR
-        s_stack.splice(s_stack.begin(), s_stack, x_s_ptr);
+    if ((*x_s_it)->status == LIR) { // x = LIR //WTF
+        s_stack.splice(s_stack.begin(), s_stack, x_s_it);
         prune_stack();
 
         // process_page(key);
@@ -115,7 +115,7 @@ bool LIRS_cache_t<cache_content, keyT>::parse_nonresHIR_in_s(typename LIRS_cache
 {
     x_data->status = LIR;
 
-    s_stack.splice(s_stack.begin(), s_stack, x_data->s_it);
+    s_stack.splice(s_stack.begin(), s_stack, *(x_data->s_it));
 
     move_s_bottom_to_q();
 
@@ -131,11 +131,11 @@ template <typename F>
 bool LIRS_cache_t<cache_content, keyT>::parse_resHIR(typename LIRS_cache_t<cache_content, keyT>::cache_it x_data, keyT key, F slow_get_page)
 {
     if (x_data->s_it != std::nullopt) {    // x in s
-        s_stack.splice(s_stack.begin(), s_stack, x_data->s_it);
+        s_stack.splice(s_stack.begin(), s_stack, *(x_data->s_it));
 
         x_data->status = LIR;
 
-        q_list.erase(x_data->q_it);
+        q_list.erase(*(x_data->q_it));
         
         move_s_bottom_to_q();
 
@@ -154,13 +154,13 @@ bool LIRS_cache_t<cache_content, keyT>::parse_resHIR(typename LIRS_cache_t<cache
 template <typename cache_content, typename keyT>
 void LIRS_cache_t<cache_content, keyT>::move_s_bottom_to_q()
 {
-    auto dying_LIR = *s_stack.back();
+    auto dying_LIR = s_stack.back();
 
     q_list.push_back(dying_LIR);
     
     dying_LIR->status = HIR;
     
-    s_stack.erase(s_stack.back());  // s_bottom -> res_HIR
+    s_stack.pop_back();  // s_bottom -> res_HIR
 }
 
 template <typename cache_content, typename keyT>
@@ -171,10 +171,10 @@ void LIRS_cache_t<cache_content, keyT>::prune_stack()
 
         s_stack.pop_back();
 
-        if (s_bottom_it->q_list == std::nullopt) {
+        if (s_bottom_it->q_it == std::nullopt) {
             cache_hash.erase(s_bottom_it->key);
             
-            cache_list.erase(*s_bottom_it);
+            cache_list.erase(s_bottom_it);
         
         } else {
             s_bottom_it->s_it = std::nullopt;
