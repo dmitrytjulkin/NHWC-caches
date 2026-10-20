@@ -35,9 +35,11 @@ struct LIRS_cache_t {
     size_t cache_size;
     LIRS_cache_t(size_t sz) : cache_size(sz) {};
     
-    size_t q_size{(cache_size + 99) / 100}; // 1% of size (rounded up)
-    size_t s_size{cache_size - q_size};
+    size_t HIR_size{(cache_size + 99) / 100}; // 1% of size (rounded up)
+    size_t LIR_size{cache_size - HIR_size};
 
+    size_t LIR_cnt{0};
+    
     using cache_list_t = typename std::list<LIRS_content<PAGE_T, keyT>>;
     using cache_it = typename cache_list_t::iterator;
 
@@ -48,8 +50,6 @@ struct LIRS_cache_t {
     using hash_t = typename std::unordered_map<keyT, cache_it>;
     using hash_it = typename hash_t::iterator;
     hash_t cache_hash;
-
-    bool is_cache_full();
 
     template <typename F> 
     bool lookup_update(keyT key, F slow_get_page);
@@ -77,7 +77,7 @@ bool LIRS_cache_t<cache_content, keyT>::lookup_update(keyT key, F slow_get_page)
 
     if (x_hash_code == cache_hash.end())      // there was no 'x' -> miss
         return parse_new_page(key, slow_get_page);
-    
+
     cache_content x_data = *x_hash_code->second;
 
     if (x_data.status == HIR && x_data.q_it == std::nullopt) // still a miss
@@ -101,11 +101,18 @@ template <typename cache_content, typename keyT>
 template <typename F>
 bool LIRS_cache_t<cache_content, keyT>::parse_new_page(keyT key, F slow_get_page)
 {
-    if (cache_list.size() != 0)
-        cache_list.erase(*q_list.begin()); 
+    bool newpage_is_LIR = false;
+    bool newpage_is_resHIR = false;
 
-    if (q_list.size() != 0)
+    if (LIR_cnt < LIR_size)
+        newpage_is_LIR = true;
+        
+    else if (q_list.size() == HIR_size) {
+        newpage_is_resHIR = true;
+
+        cache_list.erase(*q_list.begin());
         q_list.erase(q_list.begin());           // delete old resHIR
+    }
 
     LIRS_content<PAGE_T> newpage = {key, slow_get_page(key)};
 
@@ -115,11 +122,15 @@ bool LIRS_cache_t<cache_content, keyT>::parse_new_page(keyT key, F slow_get_page
     s_stack.push_front(newpage_it);
     newpage_it->s_it = s_stack.begin();
 
-    q_list.push_back(newpage_it);   // x -> res_HIR
-    newpage_it->q_it = q_list.begin();
-
     cache_hash.emplace(key, cache_list.begin());
     
+    if (newpage_is_LIR) newpage_it->status = LIR;
+    
+    if (newpage_is_resHIR) {
+        q_list.push_back(newpage_it);           // x -> res_HIR
+        newpage_it->q_it = q_list.begin();
+    }
+
     return false;
 }
 
@@ -145,6 +156,7 @@ template <typename F>
 bool LIRS_cache_t<cache_content, keyT>::parse_resHIR(typename LIRS_cache_t<cache_content, keyT>::cache_it x_data, keyT key, F slow_get_page)
 {
     if (x_data->s_it != std::nullopt) {    // x in s
+        std::cout << GREEN "PASSED\n" COLOR_RESET;
         s_stack.splice(s_stack.begin(), s_stack, *(x_data->s_it));
 
         x_data->status = LIR;
@@ -155,6 +167,7 @@ bool LIRS_cache_t<cache_content, keyT>::parse_resHIR(typename LIRS_cache_t<cache
 
         prune_stack();
     } else {                                        // x not in s
+
         s_stack.push_front(x_data);
 
         q_list.push_back(x_data);
