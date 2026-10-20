@@ -6,6 +6,9 @@
 
 #include"../slow_get_page.hpp"
 
+#define GREEN "\x1B[32m"
+#define COLOR_RESET "\x1B[0m"
+
 using PAGE_T = int;
 
 enum page_status {
@@ -49,7 +52,7 @@ struct LIRS_cache_t {
     bool is_cache_full();
 
     template <typename F> 
-    bool parse_income_page(keyT key, F slow_get_page);
+    bool lookup_update(keyT key, F slow_get_page);
 
     void prune_stack ();
 
@@ -68,13 +71,13 @@ private:
 
 template <typename cache_content, typename keyT> 
 template <typename F>
-bool LIRS_cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_page)
+bool LIRS_cache_t<cache_content, keyT>::lookup_update(keyT key, F slow_get_page)
 {
     auto x_hash_code = cache_hash.find(key);
 
     if (x_hash_code == cache_hash.end())      // there was no 'x' -> miss
         return parse_new_page(key, slow_get_page);
-
+    
     cache_content x_data = *x_hash_code->second;
 
     if (x_data.status == HIR && x_data.q_it == std::nullopt) // still a miss
@@ -98,14 +101,25 @@ template <typename cache_content, typename keyT>
 template <typename F>
 bool LIRS_cache_t<cache_content, keyT>::parse_new_page(keyT key, F slow_get_page)
 {
-    cache_list.erase(*q_list.begin()); 
-    q_list.erase(q_list.begin());           // delete old resHIR
+    if (cache_list.size() != 0)
+        cache_list.erase(*q_list.begin()); 
+
+    if (q_list.size() != 0)
+        q_list.erase(q_list.begin());           // delete old resHIR
 
     LIRS_content<PAGE_T> newpage = {key, slow_get_page(key)};
-    cache_list.push_front(newpage);         // load x page
-    s_stack.push_front(cache_list.begin());
-    q_list.push_back(cache_list.begin());   // x -> res_HIR
 
+    cache_list.push_front(newpage);         // load x page
+    auto newpage_it = cache_list.begin();
+
+    s_stack.push_front(newpage_it);
+    newpage_it->s_it = s_stack.begin();
+
+    q_list.push_back(newpage_it);   // x -> res_HIR
+    newpage_it->q_it = q_list.begin();
+
+    cache_hash.emplace(key, cache_list.begin());
+    
     return false;
 }
 
