@@ -102,14 +102,11 @@ template <typename F>
 bool LIRS_cache_t<cache_content, keyT>::parse_new_page(keyT key, F slow_get_page)
 {
     bool newpage_is_LIR = false;
-    bool newpage_is_resHIR = false;
 
     if (LIR_cnt < LIR_size)
         newpage_is_LIR = true;
         
     else if (q_list.size() == HIR_size) {
-        newpage_is_resHIR = true;
-
         cache_list.erase(*q_list.begin());
         q_list.erase(q_list.begin());           // delete old resHIR
     }
@@ -124,9 +121,11 @@ bool LIRS_cache_t<cache_content, keyT>::parse_new_page(keyT key, F slow_get_page
 
     cache_hash.emplace(key, cache_list.begin());
     
-    if (newpage_is_LIR) newpage_it->status = LIR;
+    if (newpage_is_LIR) {
+        newpage_it->status = LIR;
+        ++LIR_cnt;
     
-    if (newpage_is_resHIR) {
+    } else {
         q_list.push_back(newpage_it);           // x -> res_HIR
         newpage_it->q_it = q_list.begin();
     }
@@ -156,7 +155,6 @@ template <typename F>
 bool LIRS_cache_t<cache_content, keyT>::parse_resHIR(typename LIRS_cache_t<cache_content, keyT>::cache_it x_data, keyT key, F slow_get_page)
 {
     if (x_data->s_it != std::nullopt) {    // x in s
-        std::cout << GREEN "PASSED\n" COLOR_RESET;
         s_stack.splice(s_stack.begin(), s_stack, *(x_data->s_it));
 
         x_data->status = LIR;
