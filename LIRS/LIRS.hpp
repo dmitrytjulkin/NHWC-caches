@@ -46,8 +46,7 @@ struct LIRS_cache_t {
     list_t s_stack;
     list_t q_list;
 
-    using list_it_t = typename list_t::iterator;
-    using hash_t = typename std::unordered_map<keyT, list_it_t>;
+    using hash_t = typename std::unordered_map<keyT, cache_content>;
     hash_t cache_hash;
 
     template <typename F> 
@@ -109,8 +108,8 @@ bool LIRS_cache_t<cache_content, keyT>::parse_new_page(keyT key, F slow_get_page
         
     else if (q_list.size() == HIR_size) {
         auto first_q_it = q_list.begin();
-        cache_list.erase(cache_hash.find(*first_q_it)->second.cache_it);
-        q_list.erase(first_q_elem);           // delete old resHIR
+        cache_list.erase(*cache_hash.find(*first_q_it)->second.cache_it);
+        q_list.pop_front();           // delete old resHIR
     }
 
     LIRS_content<PAGE_T> newpage = {key, slow_get_page(key)};
@@ -125,7 +124,7 @@ bool LIRS_cache_t<cache_content, keyT>::parse_new_page(keyT key, F slow_get_page
     new_data.s_it = s_stack.begin();
     
     if (newpage_is_LIR) {
-        new_data->status = LIR;
+        new_data.status = LIR;
         ++LIR_cnt;
     
     } else {
@@ -174,7 +173,7 @@ bool LIRS_cache_t<cache_content, keyT>::parse_resHIR(cache_content x_data, keyT 
         x_data.s_it = s_stack.begin();
 
         q_list.push_back(key);
-        x_data.q_it = q_list.back();
+        x_data.q_it = q_list.end();
     }
 
     // process_page(key);
@@ -185,10 +184,10 @@ bool LIRS_cache_t<cache_content, keyT>::parse_resHIR(cache_content x_data, keyT 
 template <typename cache_content, typename keyT>
 void LIRS_cache_t<cache_content, keyT>::move_s_bottom_to_q()
 {
-    cache_content dying_LIR_data = cache_hash.find(*s_stack.back())->second;
+    cache_content dying_LIR_data = cache_hash.find(s_stack.back())->second;
 
     q_list.push_back(dying_LIR_data.key);
-    dying_LIR_data.q_it = q_list.back();
+    dying_LIR_data.q_it = q_list.end();
     
     dying_LIR_data.status = HIR;
     
@@ -199,21 +198,21 @@ void LIRS_cache_t<cache_content, keyT>::move_s_bottom_to_q()
 template <typename cache_content, typename keyT>
 void LIRS_cache_t<cache_content, keyT>::prune_stack()
 {
-    keyT key = *s_stack.back();
+    keyT key = s_stack.back();
     cache_content s_bottom_data = cache_hash.find(key)->second;
 
     while (!s_stack.empty() && s_bottom_data.status == HIR) {
         s_stack.pop_back();
         s_bottom_data.s_it = std::nullopt;
 
-        if (s_bottom_it->q_it == std::nullopt) {
-            cache_list.erase(*s_bottom_it.q_it);
+        if (s_bottom_data.q_it == std::nullopt) {
+            cache_list.erase(*s_bottom_data.cache_it);
 
-            cache_hash.erase(s_bottom_it->key); // !!! (where to store big data)
+            cache_hash.erase(s_bottom_data.key); // !!! (where to store big data)
         
         }
 
-        key = *s_stack.back();
+        key = s_stack.back();
         s_bottom_data = cache_hash.find(key)->second;
     }
 }
