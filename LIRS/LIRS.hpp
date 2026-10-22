@@ -59,7 +59,7 @@ private:
     bool parse_nonresHIR_in_s(meta* x_meta, keyT key, F slow_get_page);
 
     template <typename F>
-    bool parse_resHIR(meta x_meta, keyT key, F slow_get_page);
+    bool parse_resHIR(meta* x_meta, keyT key, F slow_get_page);
 
     void delete_front_q ();
     void move_s_bottom_to_q();
@@ -74,7 +74,7 @@ bool LIRS_cache_t<meta, page_t, keyT>::lookup_update(keyT key, F slow_get_page)
     if (x_hash_code == cache_hash.end())        // there was no 'x' -> miss
         return parse_new_page(key, slow_get_page);
     
-    meta x_meta = x_hash_code->second;
+    meta& x_meta = x_hash_code->second;
     
     if (x_meta.status == HIR && x_meta.q_it == std::nullopt) // still a miss
         return parse_nonresHIR_in_s(&x_meta, key, slow_get_page);
@@ -92,7 +92,10 @@ bool LIRS_cache_t<meta, page_t, keyT>::lookup_update(keyT key, F slow_get_page)
         return true;
     }
 
-    return parse_resHIR(x_meta, key, slow_get_page);
+    bool a = parse_resHIR(&x_meta, key, slow_get_page);
+    std::cout << "have observed " << x_meta.key << " page\n";
+    std::cout << "which status is " << x_meta.status << " page\n";
+    return a;
 }
 
 template <typename meta, typename page_t, typename keyT> 
@@ -136,7 +139,7 @@ bool LIRS_cache_t<meta, page_t, keyT>::parse_nonresHIR_in_s(meta* x_meta, keyT k
 
     cache_list.push_front(slow_get_page(key));
     x_meta->cache_it = cache_list.begin();
-    
+   
     x_meta->status = LIR;
 
     s_stack.splice(s_stack.begin(), s_stack, *(x_meta->s_it));
@@ -157,7 +160,7 @@ void LIRS_cache_t<meta, page_t, keyT>::delete_front_q ()
     auto evicted_key = *q_list.begin();
     meta& evicted_page = cache_hash.find(evicted_key)->second;
 
-    cache_list.erase(*cache_hash.find(evicted_key)->second.cache_it);
+    cache_list.erase(*evicted_page.cache_it);
     q_list.pop_front();                     // delete old resHIR
 
     if (evicted_page.s_it == std::nullopt) cache_hash.erase(evicted_key);
@@ -170,26 +173,28 @@ void LIRS_cache_t<meta, page_t, keyT>::delete_front_q ()
 
 template <typename meta, typename page_t, typename keyT> 
 template <typename F>
-bool LIRS_cache_t<meta, page_t, keyT>::parse_resHIR(meta x_meta, keyT key, F slow_get_page)
+bool LIRS_cache_t<meta, page_t, keyT>::parse_resHIR(meta* x_meta, keyT key, F slow_get_page)
 {
-    if (x_meta.s_it != std::nullopt) {    // x in s
-        s_stack.splice(s_stack.begin(), s_stack, *(x_meta.s_it));
-        x_meta.s_it = s_stack.begin();
+    if (x_meta->s_it != std::nullopt) {    // x in s
+        s_stack.splice(s_stack.begin(), s_stack, *(x_meta->s_it));
+        x_meta->s_it = s_stack.begin();
 
-        x_meta.status = LIR;
+        x_meta->status = LIR;
+        // std::cout << "currently observe " << x_meta->key << " page\n";
+        // std::cout << "which status is " << x_meta->status << " page\n";
 
-        q_list.erase(*(x_meta.q_it));
-        x_meta.q_it = std::nullopt;
+        q_list.erase(*(x_meta->q_it));
+        x_meta->q_it = std::nullopt;
         
         move_s_bottom_to_q();
 
         prune_stack();
     } else {                                        // x not in s
         s_stack.push_front(key);
-        x_meta.s_it = s_stack.begin();
+        x_meta->s_it = s_stack.begin();
 
         q_list.push_back(key);
-        x_meta.q_it = q_list.end();
+        x_meta->q_it = q_list.end();
     }
 
     // process_page(key);
@@ -200,7 +205,7 @@ bool LIRS_cache_t<meta, page_t, keyT>::parse_resHIR(meta x_meta, keyT key, F slo
 template <typename meta, typename page_t, typename keyT> 
 void LIRS_cache_t<meta, page_t, keyT>::move_s_bottom_to_q()
 {
-    meta dying_LIR_data = cache_hash.find(s_stack.back())->second;
+    meta& dying_LIR_data = cache_hash.find(s_stack.back())->second;
 
     q_list.push_back(dying_LIR_data.key);
     dying_LIR_data.q_it = q_list.end();
@@ -215,18 +220,21 @@ template <typename meta, typename page_t, typename keyT>
 void LIRS_cache_t<meta, page_t, keyT>::prune_stack()
 {
     keyT key = s_stack.back();
-    meta s_bottom_data = cache_hash.find(key)->second;
+    meta& s_bottom_data = cache_hash.find(key)->second;
 
-    while (!s_stack.empty() && s_bottom_data.status == HIR) {
+    while (!s_stack.empty() && s_bottom_data.status == HIR) {        
         s_stack.pop_back();
         s_bottom_data.s_it = std::nullopt;
 
         if (s_bottom_data.q_it == std::nullopt) {
-            cache_list.erase(*s_bottom_data.cache_it);
+            // std::cout << GREEN "PASSED if\n" COLOR_RESET;
 
-            cache_hash.erase(s_bottom_data.key); // !!! (where to store big data)
-        
+            cache_list.erase(*s_bottom_data.cache_it);
+    
+            cache_hash.erase(s_bottom_data.key);
         }
+
+        // std::cout << GREEN "PASSED\n" COLOR_RESET;
 
         key = s_stack.back();
         s_bottom_data = cache_hash.find(key)->second;
