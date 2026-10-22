@@ -22,9 +22,11 @@
 
 //     int hit_cnt = 0;
 //     for (int it = 0; it < data_cnt; it++) {
+//         std::cout << "________________________________________________________________\n";
+//         std::cout << GREEN "the try = " << it + 1 <<  COLOR_RESET ", hit count = " << hit_cnt << "\n";
+
 //         hit_cnt += L1.lookup_update(cache_requests[it], slow_get_page);
 
-//         std::cout << GREEN "the try = " << it + 1 <<  COLOR_RESET ", hit count = " << hit_cnt << "\n";
 //         print_LIRS_data(&L1);
 //         print_LIRS_meta(&L1);
 //         std::cout << "\n";

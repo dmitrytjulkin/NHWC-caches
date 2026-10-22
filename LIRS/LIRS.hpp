@@ -71,11 +71,10 @@ template <typename F>
 bool LIRS_cache_t<meta, page_t, keyT>::lookup_update(keyT key, F slow_get_page)
 {
     auto x_hash_code = cache_hash.find(key);
-
-    if (x_hash_code == cache_hash.end()) {        // there was no 'x' -> miss
-        return parse_new_page(key, slow_get_page);
-    }
     
+    if (x_hash_code == cache_hash.end())        // there was no 'x' -> miss
+        return parse_new_page(key, slow_get_page);
+
     meta& x_meta = x_hash_code->second;
 
     if (x_meta.status == HIR && x_meta.q_it == std::nullopt) // still a miss
@@ -94,7 +93,7 @@ bool LIRS_cache_t<meta, page_t, keyT>::lookup_update(keyT key, F slow_get_page)
         return true;
     }
 
-    return parse_resHIR(&x_meta, key, slow_get_page);;
+    return parse_resHIR(&x_meta, key, slow_get_page);
 }
 
 template <typename meta, typename page_t, typename keyT> 
@@ -156,8 +155,6 @@ bool LIRS_cache_t<meta, page_t, keyT>::parse_nonresHIR_in_s(meta* x_meta, keyT k
 template <typename meta, typename page_t, typename keyT> 
 void LIRS_cache_t<meta, page_t, keyT>::delete_front_q ()
 {
-    // std::cout << "the " GREEN << q_list.front() << COLOR_RESET " is gointg to be evicted\n";
-
     auto evicted_key = *q_list.begin();
     meta& evicted_page = cache_hash.find(evicted_key)->second;
 
@@ -181,8 +178,9 @@ bool LIRS_cache_t<meta, page_t, keyT>::parse_resHIR(meta* x_meta, keyT key, F sl
         x_meta->s_it = s_stack.begin();
 
         x_meta->status = LIR;
-
+            
         q_list.erase(*(x_meta->q_it));
+
         x_meta->q_it = std::nullopt;
         
         move_s_bottom_to_q();
@@ -193,7 +191,7 @@ bool LIRS_cache_t<meta, page_t, keyT>::parse_resHIR(meta* x_meta, keyT key, F sl
         x_meta->s_it = s_stack.begin();
 
         q_list.splice(q_list.end(), q_list, *x_meta->q_it);
-        x_meta->q_it = q_list.end();
+        x_meta->q_it = --q_list.end();
     }
 
     // process_page(key);
@@ -207,7 +205,7 @@ void LIRS_cache_t<meta, page_t, keyT>::move_s_bottom_to_q()
     meta& dying_LIR_data = cache_hash.find(s_stack.back())->second;
 
     q_list.push_back(dying_LIR_data.key);
-    dying_LIR_data.q_it = q_list.end();
+    dying_LIR_data.q_it = --q_list.end();
     
     dying_LIR_data.status = HIR;
     
@@ -221,8 +219,6 @@ void LIRS_cache_t<meta, page_t, keyT>::prune_stack()
     keyT key = s_stack.back();
     meta& s_bottom_data = cache_hash.find(key)->second;
 
-    // std::cout << "q_list.front() = " << q_list.front() << "\n";
-
     while (!s_stack.empty() && s_bottom_data.status == HIR) {
         s_stack.pop_back();
         s_bottom_data.s_it = std::nullopt;
@@ -233,6 +229,4 @@ void LIRS_cache_t<meta, page_t, keyT>::prune_stack()
         key = s_stack.back();
         s_bottom_data = cache_hash.find(key)->second;
     }
-
-    // std::cout << "q_list.front() = " << q_list.front() << "\n";
 }
