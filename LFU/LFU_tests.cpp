@@ -11,7 +11,7 @@
                                                     \
     int hit_cnt = 0;                                \
     for (int it = 0; it < data_cnt; it++)           \
-        hit_cnt += L1.parse_income_page<PAGE_T(*)(int)>(cache_requests[it], slow_get_page);
+        hit_cnt += L1.parse_income_page<PAGE_T(*)(int)>(cache_requests[it], slow_get_page); // rm <>
 
 
 TEST(LFU, Test1)

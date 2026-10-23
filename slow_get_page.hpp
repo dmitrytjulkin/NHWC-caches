@@ -3,6 +3,6 @@
 
 using PAGE_T = int;
 
-int slow_get_page(int key);
+PAGE_T slow_get_page(int key);
 
 #endif

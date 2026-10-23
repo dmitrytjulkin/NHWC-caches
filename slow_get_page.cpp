@@ -1,6 +1,6 @@
 #include "slow_get_page.hpp"
 
-int slow_get_page(int key)
+PAGE_T slow_get_page(int key)
 {
     return 0;
 }
