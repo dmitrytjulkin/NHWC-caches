@@ -1,9 +1,8 @@
-#include<iostream>
-#include"gtest/gtest.h"
+#include "gtest/gtest.h"
 
-#include"LIRS.hpp"
-#if 1
-#include"../debug.hpp"
+#include "LIRS.hpp"
+#if 0
+#include "../debug.hpp"
 #endif
 
 #define COUNT_HITS                                  \
@@ -13,7 +12,7 @@
     for (int it = 0; it < data_cnt; it++)           \
         hit_cnt += L1.lookup_update(cache_requests[it], slow_get_page);
 
-// TEST(LIRS, Test0)
+// TEST (LIRS, Test0)
 // {
 //     int cache_sz = 3, data_cnt = 7;
 //     int cache_requests[] = {1, 2, 3, 3, 1, 1, 1};
@@ -36,7 +35,7 @@
 // }
 
 // 1. Interleaved LIR hits and HIR misses (scan resistance)
-TEST(LIRS, Test1)
+TEST (LIRS, Test1)
 {
     int cache_sz = 3, data_cnt = 6;
     int cache_requests[] = {1, 2, 1, 3, 4, 1};
@@ -47,7 +46,7 @@ TEST(LIRS, Test1)
 }
 
 // 2. Repeated hits on a single LIR page
-TEST(LIRS, Test2)
+TEST (LIRS, Test2)
 {
     int cache_sz = 2, data_cnt = 7;
     int cache_requests[] = {1, 1, 1, 1, 1, 1, 1};
@@ -58,7 +57,7 @@ TEST(LIRS, Test2)
 }
 
 // 3. Sequential scan of unique pages, all misses
-TEST(LIRS, Test3)
+TEST (LIRS, Test3)
 {
     int cache_sz = 2, data_cnt = 7;
     int cache_requests[] = {1, 2, 3, 4, 5, 6, 7};
@@ -69,7 +68,7 @@ TEST(LIRS, Test3)
 }
 
 // 4. Basic LIR hit after initialization
-TEST(LIRS, Test4)
+TEST (LIRS, Test4)
 {
     int cache_sz = 3, data_cnt = 3;
     int cache_requests[] = {1, 2, 1};
@@ -80,7 +79,7 @@ TEST(LIRS, Test4)
 }
 
 // 5. Hit on Resident HIR causing promotion to LIR
-TEST(LIRS, Test5)
+TEST (LIRS, Test5)
 {
     int cache_sz = 3, data_cnt = 4;
     int cache_requests[] = {1, 2, 3, 3};
@@ -91,7 +90,7 @@ TEST(LIRS, Test5)
 }
 
 // 6. Miss on Non-resident HIR (page in S), causing promotion to LIR
-TEST(LIRS, Test6)
+TEST (LIRS, Test6)
 {
     int cache_sz = 3, data_cnt = 5;
     int cache_requests[] = {1, 2, 3, 4, 3};
@@ -102,7 +101,7 @@ TEST(LIRS, Test6)
 }
 
 // 7. Complex mixed scenario with hits, promotions, and non-resident returns
-TEST(LIRS, Test7)
+TEST (LIRS, Test7)
 {
     int cache_sz = 3, data_cnt = 9;
     int cache_requests[] = {1, 2, 3, 3, 4, 1, 4, 3, 2};
@@ -113,7 +112,7 @@ TEST(LIRS, Test7)
 }
 
 // 8. Hit on LIR page during initialization phase (LIR not full)
-TEST(LIRS, Test8)
+TEST (LIRS, Test8)
 {
     int cache_sz = 3, data_cnt = 2;
     int cache_requests[] = {1, 1};
@@ -124,7 +123,7 @@ TEST(LIRS, Test8)
 }
 
 // 9. Multiple hits on already promoted LIR pages
-TEST(LIRS, Test9)
+TEST (LIRS, Test9)
 {
     int cache_sz = 3, data_cnt = 4;
     int cache_requests[] = {1, 2, 1, 2};
@@ -135,7 +134,7 @@ TEST(LIRS, Test9)
 }
 
 // 10. Initialization, filling Q, and pure eviction (all misses)
-TEST(LIRS, Test10)
+TEST (LIRS, Test10)
 {
     int cache_sz = 3, data_cnt = 4;
     int cache_requests[] = {1, 2, 3, 4};
@@ -146,7 +145,7 @@ TEST(LIRS, Test10)
 }
 
 // 11. Ping-pong promotion followed by non-resident resurrection
-TEST(LIRS, Test11)
+TEST (LIRS, Test11)
 {
     int cache_sz = 3, data_cnt = 7;
     int cache_requests[] = {1, 2, 3, 3, 1, 4, 1};
@@ -157,7 +156,7 @@ TEST(LIRS, Test11)
 }
 
 // 12. Hit on Resident HIR (not in S) keeps it HIR and moves it to Q
-TEST(LIRS, Test12)
+TEST (LIRS, Test12)
 {
     int cache_sz = 3, data_cnt = 5;
     int cache_requests[] = {1, 2, 3, 3, 1};
@@ -168,7 +167,7 @@ TEST(LIRS, Test12)
 }
 
 // 13. Hit on HIR not in S, immediately followed by its eviction
-TEST(LIRS, Test13)
+TEST (LIRS, Test13)
 {
     int cache_sz = 3, data_cnt = 6;
     int cache_requests[] = {1, 2, 3, 3, 1, 4};
@@ -179,7 +178,7 @@ TEST(LIRS, Test13)
 }
 
 // 14. Hit on Resident HIR not in S, followed by eviction and promotion
-TEST(LIRS, Test14)
+TEST (LIRS, Test14)
 {
     int cache_sz = 3, data_cnt = 8;
     int cache_requests[] = {1, 2, 3, 3, 1, 4, 4, 3};
@@ -190,7 +189,7 @@ TEST(LIRS, Test14)
 }
 
 // 15. Mixed hits on LIR and Resident HIR (status ping-pong)
-TEST(LIRS, Test15)
+TEST (LIRS, Test15)
 {
     int cache_sz = 3, data_cnt = 6;
     int cache_requests[] = {1, 2, 3, 3, 2, 2};
@@ -201,7 +200,7 @@ TEST(LIRS, Test15)
 }
 
 // 16. Hot LIR page retention during a constant stream of new HIRs
-TEST(LIRS, Test16)
+TEST (LIRS, Test16)
 {
     int cache_sz = 3, data_cnt = 8;
     int cache_requests[] = {1, 2, 3, 1, 4, 1, 5, 1};
@@ -212,7 +211,7 @@ TEST(LIRS, Test16)
 }
 
 // 17. Miss на Non-resident HIR, которая глубоко в стеке S (проверка вытеснения Q и обрезки)
-TEST(LIRS, Test17)
+TEST (LIRS, Test17)
 {
     int cache_sz = 3, data_cnt = 6;
     int cache_requests[] = {1, 2, 3, 4, 5, 3};
@@ -222,7 +221,7 @@ TEST(LIRS, Test17)
     EXPECT_EQ(hit_cnt, 0);
 }
 // 18. Miss on all pages, checking Q rotation
-TEST(LIRS, Test18)
+TEST (LIRS, Test18)
 {
     int cache_sz = 3, data_cnt = 5;
     int cache_requests[] = {1, 2, 3, 4, 5};
@@ -233,7 +232,7 @@ TEST(LIRS, Test18)
 }
 
 // 19. Hits on initial LIR pages
-TEST(LIRS, Test19)
+TEST (LIRS, Test19)
 {
     int cache_sz = 3, data_cnt = 4;
     int cache_requests[] = {1, 1, 2, 2};
@@ -244,7 +243,7 @@ TEST(LIRS, Test19)
 }
 
 // 20. Consecutive promotions causing multiple HIR prunings
-TEST(LIRS, Test20)
+TEST (LIRS, Test20)
 {
     int cache_sz = 3, data_cnt = 7;
     int cache_requests[] = {1, 2, 3, 3, 2, 4, 5};
@@ -255,7 +254,7 @@ TEST(LIRS, Test20)
 }
 
 // 21. Deep resurrection of a non-resident HIR from the bottom of S
-TEST(LIRS, Test21)
+TEST (LIRS, Test21)
 {
     int cache_sz = 3, data_cnt = 6;
     int cache_requests[] = {1, 2, 3, 4, 5, 1};
@@ -266,7 +265,7 @@ TEST(LIRS, Test21)
 }
 
 // 22. Consecutive misses on pages that were evicted from Q but kept in S
-TEST(LIRS, Test22)
+TEST (LIRS, Test22)
 {
     int cache_sz = 3, data_cnt = 6;
     int cache_requests[] = {1, 2, 3, 4, 3, 4};
@@ -277,7 +276,7 @@ TEST(LIRS, Test22)
 }
 
 // 23. Frequent hits on LIR protecting it from eviction
-TEST(LIRS, Test23)
+TEST (LIRS, Test23)
 {
     int cache_sz = 3, data_cnt = 6;
     int cache_requests[] = {1, 2, 3, 1, 4, 1};
@@ -288,7 +287,7 @@ TEST(LIRS, Test23)
 }
 
 // 24. Miss on page after it was completely evicted from cache and S
-TEST(LIRS, Test24)
+TEST (LIRS, Test24)
 {
     int cache_sz = 3, data_cnt = 6;
     int cache_requests[] = {1, 2, 3, 4, 5, 4};
@@ -299,7 +298,7 @@ TEST(LIRS, Test24)
 }
 
 // 25. Mixed hits on LIR and Resident HIR
-TEST(LIRS, Test25)
+TEST (LIRS, Test25)
 {
     int cache_sz = 3, data_cnt = 6;
     int cache_requests[] = {1, 2, 3, 1, 3, 1};
@@ -310,7 +309,7 @@ TEST(LIRS, Test25)
 }
 
 // 26. HIR hit causing demotion of LIR to Q, then miss on that demoted LIR
-TEST(LIRS, Test26)
+TEST (LIRS, Test26)
 {
     int cache_sz = 3, data_cnt = 6;
     int cache_requests[] = {1, 2, 3, 3, 1, 2};
@@ -321,7 +320,7 @@ TEST(LIRS, Test26)
 }
 
 // 27. Non-resident HIR miss followed immediately by a hit
-TEST(LIRS, Test27)
+TEST (LIRS, Test27)
 {
     int cache_sz = 3, data_cnt = 6;
     int cache_requests[] = {1, 2, 3, 4, 3, 3};
@@ -332,7 +331,7 @@ TEST(LIRS, Test27)
 }
 
 // 28. Alternating hits between LIR and HIR pages
-TEST(LIRS, Test28)
+TEST (LIRS, Test28)
 {
     int cache_sz = 3, data_cnt = 6;
     int cache_requests[] = {1, 2, 3, 2, 3, 2};
@@ -343,7 +342,7 @@ TEST(LIRS, Test28)
 }
 
 // 29. Scanning pattern: hits on LIR, misses on HIR
-TEST(LIRS, Test29)
+TEST (LIRS, Test29)
 {
     int cache_sz = 3, data_cnt = 6;
     int cache_requests[] = {1, 2, 3, 1, 4, 2};
@@ -354,7 +353,7 @@ TEST(LIRS, Test29)
 }
 
 // 30. Consecutive misses on previously evicted Non-resident HIRs
-TEST(LIRS, Test30)
+TEST (LIRS, Test30)
 {
     int cache_sz = 3, data_cnt = 7;
     int cache_requests[] = {1, 2, 3, 4, 3, 4, 3};
@@ -365,7 +364,7 @@ TEST(LIRS, Test30)
 }
 
 // 31. Complex promotion and demotion of multiple pages
-TEST(LIRS, Test31)
+TEST (LIRS, Test31)
 {
     int cache_sz = 3, data_cnt = 6;
     int cache_requests[] = {1, 2, 3, 3, 4, 4};
@@ -376,7 +375,7 @@ TEST(LIRS, Test31)
 }
 
 // 32. Sequence causing demotion and subsequent promotion of different pages
-TEST(LIRS, Test32)
+TEST (LIRS, Test32)
 {
     int cache_sz = 3, data_cnt = 7;
     int cache_requests[] = {1, 2, 3, 3, 1, 4, 4};
@@ -387,7 +386,7 @@ TEST(LIRS, Test32)
 }
 
 // 33. Repeated hits on a newly promoted LIR page
-TEST(LIRS, Test33)
+TEST (LIRS, Test33)
 {
     int cache_sz = 3, data_cnt = 7;
     int cache_requests[] = {1, 2, 3, 3, 1, 1, 1};
@@ -398,7 +397,7 @@ TEST(LIRS, Test33)
 }
 
 // 34. Miss on Non-resident HIR after it was pushed deeper in S
-TEST(LIRS, Test34)
+TEST (LIRS, Test34)
 {
     int cache_sz = 3, data_cnt = 7;
     int cache_requests[] = {1, 2, 3, 4, 5, 3, 3};
@@ -409,7 +408,7 @@ TEST(LIRS, Test34)
 }
 
 // 35. Continuous hits on a single LIR page
-TEST(LIRS, Test35)
+TEST (LIRS, Test35)
 {
     int cache_sz = 3, data_cnt = 5;
     int cache_requests[] = {1, 1, 1, 1, 1};
@@ -420,7 +419,7 @@ TEST(LIRS, Test35)
 }
 
 // 36. Continuous hits on a single HIR page (after promotion)
-TEST(LIRS, Test36)
+TEST (LIRS, Test36)
 {
     int cache_sz = 3, data_cnt = 6;
     int cache_requests[] = {1, 2, 3, 3, 3, 3};
@@ -431,7 +430,7 @@ TEST(LIRS, Test36)
 }
 
 // 37. Alternating LIR hits with new page misses
-TEST(LIRS, Test37)
+TEST (LIRS, Test37)
 {
     int cache_sz = 3, data_cnt = 7;
     int cache_requests[] = {1, 2, 1, 3, 1, 4, 1};

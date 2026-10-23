@@ -18,7 +18,7 @@ MAIN = main.cpp
 LFU_DIR = LFU
 LIRS_DIR = LIRS
 
-OTHER = slow_get_page.cpp $(LFU_DIR)/LFU.cpp debug.cpp
+OTHER = slow_get_page.cpp $(LFU_DIR)/LFU.cpp
 
 HEADERS = $(LIRS_DIR)/LIRS.hpp
 
