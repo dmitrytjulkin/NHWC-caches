@@ -1,40 +1,64 @@
-IMPROVED_FLAGS = -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Wc++14-compat 			 \
-		-Wmissing-declarations -Wcast-align -Wcast-qual -Wchar-subscripts				 \
-		-Wconversion -Wctor-dtor-privacy -Wempty-body -Wfloat-equal -Wformat-nonliteral	 \
-		-Wformat-security -Wformat-signedness -Wformat=2 -Winline -Wnon-virtual-dtor	 \
-		-Woverloaded-virtual -Wpacked -Wpointer-arith -Winit-self -Wredundant-decls		 \
-		-Wshadow -Wsign-conversion -Wsign-promo -Wstrict-overflow=2 -Wsuggest-override	 \
-		-Wswitch-default -Wswitch-enum -Wundef -Wunreachable-code -Wunused				 \
-		-Wvariadic-macros -Wno-missing-field-initializers -Wno-narrowing				 \
-		-Wno-old-style-cast -Wno-varargs -Wstack-protector -fcheck-new					 \
-		-fsized-deallocation -fstack-protector -fstrict-overflow -fno-omit-frame-pointer \
-		-Wlarger-than=8192 -fPIE -Werror=vla \
-		-fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,nonnull-attribute,null,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr
+ifeq ($(origin CXX) ,default)
+CXX = g++
+endif
 
-CC = g++
+OUT_O_DIR ?= build
+COMMONINC = -I./. -I./LFU -I./2Q -I./ARC -I./LIRS
 
-MAIN = main.cpp
+TESTS = ./LIRS/LIRS_test				# !
+SRC = ./source							# ?
+ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST)))) # ?
 
-LFU_DIR = LFU
-LIRS_DIR = LIRS
+override CFLAGS += $(COMMONINC)
 
-OTHER = slow_get_page.cpp $(LFU_DIR)/LFU.cpp
+CSRC = main.cpp slow_get_page.cpp get_params.cpp
 
-HEADERS = $(LIRS_DIR)/LIRS.hpp
+# reproducing source tree in object tree
+COBJ := $(addprefix $(OUT_O_DIR)/, $(CSRC:.cpp=.o))
+DEPS = $(COBJ:.o=.d)
 
-TESTS = $(LIRS_DIR)/LIRS_test.cpp
+.PHONY: all
+all: $(OUT_O_DIR)/cache.x
 
-run_nhwc: $(MAIN) $(OTHER)
-	$(CC) $(IMPROVED_FLAGS) $^ -o $@
+$(OUT_O_DIR)/cache.x: $(COBJ)
+	(CXX) $^ -o $@ $(LDFLAGS)
 
-GTEST_DIR = third_party/googletest
-GTEST_SRCS = $(GTEST_DIR)/src/gtest-all.cc $(GTEST_DIR)/src/gtest_main.cc
+# static pattern rule to not redefine generic one
+$(COBJ) : $(OUT_O_DIR)/%.o : %.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CFLAGS) -c $< -o $@
 
-TESTS_FLAGS = -std=c++17 -Wall -I$(GTEST_DIR)/include -I$(GTEST_DIR)
+$(DEPS) : $(OUT_O_DIR)/%.d : %.cpp
+	@mkdir -p $(@D)
+	$(CXX) -E $(CFLAGS) $< -MM -MT $(@:.d=.o) > $@
 
-run_tests: $(TESTS) $(OTHER) $(GTEST_SRCS) $(HEADERS)
-	$(CC) $(TESTS_FLAGS) $(TESTS) $(OTHER) $(GTEST_SRCS) -o $@
+# parse tests
+TSRC = $(wildcard $(TESTS)/*.cpp)
+TOBJ = $(addprefix $(OUT_O_DIR)/, $(TSRC:.cpp=.o))
+TEST_EXE = $(OUT_O_DIR)/run_tests
 
+GTEST_LIBS = -lgtest -lgtest_main -pthread
+
+CORE_OBJ = $(filter-out $(OUT_O_DIR)/main.o, $(COBJ))
+
+$(OUT_O_DIR)/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CFLAGS) -c $< -o $@
+
+.PHONY: testrun
+testrun: $(TEST_EXE)
+	./$(TEST_EXE)
+
+$(TEST_EXE): $(TOBJ) $(CORE_OBJ)
+	$(CXX) $^ -o $@ $(LDFLAGS) $(GTEST_LIBS)
+
+PHONY: clean
 clean:
-	rm -rf $(BINARY).dSYM \
-	rm -f BINARY
+	rm -rf $(COBJ) $(DEPS) $(OUT_O_DIR)/*.x $(OUT_O_DIR)/*.log
+
+# targets which we have no need to recollect deps
+NODEPS = clean
+
+ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NODEPS))))
+include $(DEPS)
+endif
