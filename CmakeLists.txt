@@ -14,12 +14,15 @@ target_compile_features (nhwc.x PRIVATE cxx_std_17)
 
 enable_testing ()
 
-option (BUILD_LIRS_TESTS "Build LIRS unit-tests" OFF)
-if (BUILD_LIRS_TESTS)
-    add_subdirectory (LIRS)
-endif()
+option (BUILD_TESTS "Build unit-tests for all algorithms" OFF)
 
-# option (BUILD_LIRS_TESTS "Build LFU unit-tests" OFF)
-# if (BUILD_LIRS_TESTS)
-#     add_subdirectory (LFU)
-# endif()
+function (add_testrun SUB_DIR)
+    if (BUILD_TESTS)
+        add_subdirectory (${SUB_DIR})
+    endif()
+endfunction ()
+
+add_testrun (LFU)
+# add_testrun (2Q)
+# add_testrun (ARC)
+add_testrun (LIRS)

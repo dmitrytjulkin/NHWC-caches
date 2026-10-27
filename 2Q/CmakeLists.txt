@@ -1,0 +1,2 @@
+# 1. delete ARC.cpp and leave only ARC.hpp
+# 2. insert the same code as in ../LIRS/CMakeLists.txt (with micro changes)

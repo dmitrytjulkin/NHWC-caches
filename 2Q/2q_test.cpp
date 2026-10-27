@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "2Q.hpp"
-#include "../slow_get_page.h"
+#include "../slow_get_page.hpp"
 
 TEST(Cache2QBasic, MissOnEmpty) {
     Cache_2q_t<int> cache(4);
