@@ -1,0 +1,10 @@
+cmake_minimum_required (VERSION 3.20)
+project (nhwc_project LANGUAGES CXX)
+
+SET (COMMON_SRCS get_params.cpp; slow_get_page.cpp)
+
+add_library (cmmn_lib STATIC ${COMMON_SRCS})
+target_include_directories(cmmn_lib PUBLIC .)
+
+add_executable(main.x main.cpp)
+target_link_libraries(main.x 1clib)
