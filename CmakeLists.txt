@@ -5,7 +5,7 @@ set (CMAKE_CXX_STANDARD_REQUIRED ON)
 set (COMMON_SRCS get_params.cpp slow_get_page.cpp)
 
 add_library (cmmn_lib STATIC ${COMMON_SRCS})
-target_include_directories (cmmn_lib PUBLIC . LIRS)
+target_include_directories (cmmn_lib PUBLIC . LIRS LFU ARC 2Q)
 target_compile_features (cmmn_lib PRIVATE cxx_std_17)
 
 add_executable (nhwc.x main.cpp)
