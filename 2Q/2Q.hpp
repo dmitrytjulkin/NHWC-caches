@@ -4,6 +4,9 @@
 #include <list>
 #include <unordered_map>
 #include <algorithm>
+#include <functional>
+
+#include "../ICache.hpp"
 
 template <typename T, typename KeyT = int>
 struct Content2Q {
@@ -12,7 +15,7 @@ struct Content2Q {
 };
 
 template <typename T, typename KeyT = int>
-struct Cache_2q_t {
+struct Cache_2q_t : public ICache<T, KeyT> {
 
 private:
     size_t cache_size_;
@@ -66,8 +69,7 @@ public:
     void insert_to_am(const Content2Q<T, KeyT>& node);
     void insert_to_a1out(KeyT key);
 
-    template <typename F>
-    bool lookup_update(KeyT key, F slow_get_page);
+    bool lookup_update(KeyT key, std::function<T(KeyT)> slow_get_page) override;
 };
 
 #endif

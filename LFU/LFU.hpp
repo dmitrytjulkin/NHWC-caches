@@ -3,12 +3,13 @@
 #include<list>
 #include<unordered_map>
 
+#include "../ICache.hpp"
 #include"../slow_get_page.hpp"
 
 using PAGE_T = int;
 
 template <typename cache_content, typename keyT = int> 
-struct LFU_cache_t {
+struct LFU_cache_t : public ICache<T, keyT> {
     size_t size;
     LFU_cache_t(size_t sz) : size(sz) {};
 
@@ -21,8 +22,7 @@ struct LFU_cache_t {
 
     auto find_unfrequent_page();
 
-    template <typename F> 
-    bool parse_income_page(keyT key, F slow_get_page);
+    bool lookup_update(keyT key, std::function<cache_content(keyT)> slow_get_page) override
 };
 
 template <typename page_t>

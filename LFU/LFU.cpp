@@ -14,8 +14,7 @@ bool LFU_cache_t<cache_content, keyT>::is_cache_full()
 }
 
 template <typename cache_content, typename keyT> 
-template <typename F>
-bool LFU_cache_t<cache_content, keyT>::parse_income_page(keyT key, F slow_get_page)
+bool LFU_cache_t<cache_content, keyT>::lookup_update(keyT key, std::function<cache_content(keyT)> slow_get_page)
 {
     auto cached_page_ptr = hash_.find(key);
         
@@ -63,5 +62,3 @@ auto LFU_cache_t<cache_content, keyT>::find_unfrequent_page()
 
     return (rare_it);
 }
-
-template bool LFU_cache_t<LFU_content<PAGE_T>, int>::parse_income_page<PAGE_T(*)(int)>(int, PAGE_T(*)(int));

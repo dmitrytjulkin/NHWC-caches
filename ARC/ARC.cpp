@@ -45,8 +45,7 @@ void Cache_arc_t<T, KeyT>::insert_to_t2(const ContentARC<T, KeyT>& node) {
 }
 
 template <typename T, typename KeyT>
-template <typename F>
-bool Cache_arc_t<T, KeyT>::lookup_update(KeyT key, F slow_get_page) {
+bool Cache_arc_t<T, KeyT>::lookup_update(KeyT key, std::function<T(KeyT)> slow_get_page) {
     if (in_t1(key)) {
         auto it = t1_map_.find(key);
         t2_.splice(t2_.begin(), t1_, it->second);

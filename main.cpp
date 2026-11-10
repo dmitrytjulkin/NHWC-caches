@@ -4,7 +4,9 @@
 
 #include "get_params.hpp"
 #include "slow_get_page.hpp"
-#include "ARC.hpp"
+#include "level_sizes.hpp"
+#include "ICache.hpp"
+#include "Factory.hpp"
 
 int main()
 {
@@ -14,15 +16,25 @@ int main()
     if (input == std::nullopt)
         return 1;
 
-    // Cache_arc_t<int> cache(input->cache_size);
+    std::vector<int> level_sizes = Count_Levels_Sizes(input);
 
-    // for (size_t i = 0; i < input->data.size(); i++)
-    // {
-    //     if (cache.lookup_update(input->data[i], slow_get_page))
-    //         hit_num++;
-    //     else
-    //         miss_num++;
-    // }
+    std::vector<std::unique_ptr<ICache<int, int>>> levels(input->levels_types.size());
+    
+    CacheFactory<int, int> factory;
+
+    for (int i = 0; i < levels.size(); i++)
+        levels[i] = factory.create(input->levels_types[i], level_sizes[i]);
+
+    std::function<int(int)> fetcher = [](int key) {
+        return slow_get_page(key);
+    };
+
+    for (int i = levels.size() - 2; i >= 0; --i) {
+        fetcher = [&levels, i, fetcher](int key) -> int {
+            levels[i+1]->lookup_update(key, fetcher);
+            return fetcher(key);
+        };
+    }
 
     std::cout << "Number of hits = " << hit_num << "\n";
     std::cout << "Number of misses = " << miss_num << "\n";

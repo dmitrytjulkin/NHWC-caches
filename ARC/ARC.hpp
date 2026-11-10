@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <algorithm>
 
+#include "../ICache.hpp"
+
 template <typename T, typename KeyT = int>
 struct ContentARC {
     KeyT key;
@@ -12,7 +14,7 @@ struct ContentARC {
 };
 
 template <typename T, typename KeyT = int>
-struct Cache_arc_t {
+struct Cache_arc_t : public ICache<T, KeyT> {
 
 private:
     size_t cache_size_;
@@ -62,8 +64,7 @@ public:
     void insert_to_t1(const ContentARC<T, KeyT>& node);
     void insert_to_t2(const ContentARC<T, KeyT>& node);
 
-    template <typename F>
-    bool lookup_update(KeyT key, F slow_get_page);
+    bool lookup_update(KeyT key, std::function<T(KeyT)> slow_get_page) override;
 };
 
 #endif

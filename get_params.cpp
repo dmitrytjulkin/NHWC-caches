@@ -28,6 +28,11 @@ std::optional<InputData> Reading()
         return std::nullopt;
     }
 
+    if (input.total_cache_size < cache_num) {
+        std::cerr << "ERROR: cache size is too small.\n";
+        return std::nullopt;
+    }
+
     input.data.resize(data_size);
 
     for (int i = 0; i < data_size; ++i) {
