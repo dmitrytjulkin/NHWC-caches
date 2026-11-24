@@ -1,4 +1,3 @@
-#include <iostream>
 #include "gtest/gtest.h"
 
 #include "LFU.hpp"
@@ -11,7 +10,7 @@
                                                     \
     int hit_cnt = 0;                                \
     for (int it = 0; it < data_cnt; it++)           \
-        hit_cnt += L1.lookup_update (cache_requests[it], slow_get_page);
+        hit_cnt += L1.lookup (cache_requests[it], slow_get_page);
 
 TEST (LFU, Test1)
 {
@@ -22,7 +21,6 @@ TEST (LFU, Test1)
 
     EXPECT_EQ (hit_cnt, 1);
 }
-
 
 TEST (LFU, Test2)
 {
