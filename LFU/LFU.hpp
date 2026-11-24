@@ -29,7 +29,9 @@ public:
     
     auto find_unfrequent_page ();
 
-    template<typename F, typename page_type>
+    bool is_hit (keyT key);
+
+    template<typename F>
     std::optional<page_t> lookup (const keyT key, const F slow_get_page);
 
     std::pair<keyT, page_t> insert (keyT key);
@@ -37,21 +39,20 @@ public:
     void erase (keyT key);
 };
 
-template<typename cache_content, typename keyT> 
-bool LFU_cache_t<cache_content, keyT>::is_cache_full ()
+template<typename cache_content, typename page_t, typename keyT> 
+bool LFU_cache_t<cache_content, page_t, keyT>::is_cache_full ()
 {
     if (cache_.size () < size) return false;
 
     return true;
 }
 
-template<typename cache_content, typename keyT> 
-template<typename F, typename page_type>
-std::optional<page_type> LFU_cache_t<cache_content, keyT>::lookup (const keyT key, const F slow_get_page)
+template<typename cache_content, typename page_t, typename keyT> 
+template<typename F> 
+std::optional<page_t> LFU_cache_t<cache_content, page_t, keyT>::lookup (const keyT key, 
+                                                                        const F slow_get_page)
 {
     auto cached_page_ptr = hash_.find (key);
-
-    bool cache_is_full = is_cache_full ();
 
     if (cached_page_ptr != hash_.end ()) {
         cache_.splice(cache_.begin (), cache_, cached_page_ptr->second);
@@ -59,7 +60,7 @@ std::optional<page_type> LFU_cache_t<cache_content, keyT>::lookup (const keyT ke
 
         // process_page (key);
 
-        return cache_.front().page;
+        return cache_.front ().page;
     }
 
     insert (key);
@@ -67,34 +68,37 @@ std::optional<page_type> LFU_cache_t<cache_content, keyT>::lookup (const keyT ke
     return cache_.front ().page;
 }
 
-// template <typename cache_content, typename page_t, typename keyT>
-// std::pair<keyT, page_t> LFU_cache_t<cache_content, keyT>::insert (keyT key)
-// {
-//     auto rare_it = find_unfrequent_page ();
-//     if (cache_is_full && rare_it != cache_.end ()) {
-//         std::pair<keyT, cache_content> evicted_page = {rare_it->key, rare_it->page};
+template <typename cache_content, typename page_t, typename keyT>
+std::pair<keyT, page_t> LFU_cache_t<cache_content, page_t, keyT>::insert (keyT key)
+{
+    auto rare_it = find_unfrequent_page ();
+    std::pair<keyT, cache_content> evicted_page = {};
+    if (is_cache_full () && rare_it != cache_.end ()) {
+        evicted_page = {rare_it->key, rare_it->page};   // !
 
-//         erase (rare_it->key);
-//     }
+        erase (rare_it->key);
+    } 
+    else
+        evicted_page = {0, nullptr};
 
-//     LFU_content<page_type> newpage = {key, slow_get_page (key), 1}; 
-//     cache_.push_front (newpage);
-//     hash_.emplace (key, cache_.begin ());
+    LFU_content<page_t> newpage = {key, slow_get_page (key), 1}; 
+    cache_.push_front (newpage);
+    hash_.emplace (key, cache_.begin ());
 
-//     // process_page (key);
+    // process_page (key);
 
-//     return evicted_page;
-// }
+    return evicted_page; // !
+}
 
-template <typename cache_content, typename keyT>
-void LFU_content_t<cache_content, keyT>::erase (keyT key)
+template<typename cache_content, typename page_t, typename keyT> 
+void LFU_cache_t<cache_content, page_t, keyT>::erase (keyT key)
 {
     cache_.erase (hash_.find(key)->second);
     hash_.erase (key);
 }
 
-template <typename cache_content, typename keyT>
-auto LFU_cache_t<cache_content, keyT>::find_unfrequent_page ()
+template<typename cache_content, typename page_t, typename keyT> 
+auto LFU_cache_t<cache_content, page_t, keyT>::find_unfrequent_page ()
 {
     auto it = cache_.begin ();
     auto rare_it = it;
@@ -110,4 +114,10 @@ auto LFU_cache_t<cache_content, keyT>::find_unfrequent_page ()
     }
 
     return rare_it;
+}
+
+template <typename cache_content, typename page_t, typename keyT>
+bool LFU_cache_t<cache_content, page_t, keyT>::is_hit (keyT key)
+{
+    return hash_.find (key) == hash_.end ();
 }
