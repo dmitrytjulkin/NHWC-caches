@@ -11,7 +11,7 @@
                                                     \
     int hit_cnt = 0;                                \
     for (int it = 0; it < data_cnt; it++)           \
-        hit_cnt += L1.parse_income_page (cache_requests[it], slow_get_page);
+        hit_cnt += L1.lookup_update (cache_requests[it], slow_get_page);
 
 TEST (LFU, Test1)
 {

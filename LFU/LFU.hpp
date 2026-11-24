@@ -23,18 +23,18 @@ private:
     std::unordered_map<keyT, ListIt> hash_;
 
 public:
-    LFU_cache_t (size_t sz) : size (sz) {};
+    LFU_cache_t (const size_t sz) : size (sz) {};
 
     bool is_cache_full ();
     
     auto find_unfrequent_page ();
 
     template<typename F> 
-    bool parse_income_page (keyT key, F slow_get_page);
+    bool lookup_update (const keyT key, const F slow_get_page);
 };
 
 template<typename cache_content, typename keyT> 
-bool LFU_cache_t<cache_content, keyT>::is_cache_full()
+bool LFU_cache_t<cache_content, keyT>::is_cache_full ()
 {
     if (cache_.size () < size) return false;
 
@@ -43,7 +43,7 @@ bool LFU_cache_t<cache_content, keyT>::is_cache_full()
 
 template<typename cache_content, typename keyT> 
 template<typename F>
-bool LFU_cache_t<cache_content, keyT>::parse_income_page (keyT key, F slow_get_page)
+bool LFU_cache_t<cache_content, keyT>::lookup_update (const keyT key, const F slow_get_page)
 {
     auto cached_page_ptr = hash_.find (key);
 
