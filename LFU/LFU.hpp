@@ -34,7 +34,7 @@ public:
     template<typename F>
     std::optional<page_t> lookup (const keyT key, const F slow_get_page);
 
-    std::pair<keyT, page_t> insert (keyT key);
+    std::optional<std::pair<keyT, page_t>> insert (keyT key);
 
     void erase (keyT key);
 };
@@ -69,17 +69,17 @@ std::optional<page_t> LFU_cache_t<cache_content, page_t, keyT>::lookup (const ke
 }
 
 template <typename cache_content, typename page_t, typename keyT>
-std::pair<keyT, page_t> LFU_cache_t<cache_content, page_t, keyT>::insert (keyT key)
+std::optional<std::pair<keyT, page_t>> LFU_cache_t<cache_content, page_t, keyT>::insert (keyT key)
 {
     auto rare_it = find_unfrequent_page ();
-    std::pair<keyT, cache_content> evicted_page = {};
+    std::optional<std::pair<keyT, page_t>> evicted_page = {};
     if (is_cache_full () && rare_it != cache_.end ()) {
-        evicted_page = {rare_it->key, rare_it->page};   // !
+        evicted_page = {rare_it->key, rare_it->page};
 
         erase (rare_it->key);
     } 
     else
-        evicted_page = {0, nullptr};
+        evicted_page = std::nullopt;
 
     LFU_content<page_t> newpage = {key, slow_get_page (key), 1}; 
     cache_.push_front (newpage);
