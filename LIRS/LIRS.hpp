@@ -86,11 +86,8 @@ bool LIRS_cache_t<meta, page_t, keyT>::lookup (const keyT key)
     
     meta& x_meta = x_hash_code->second;
 
-    if (x_meta.status == HIR && x_meta.q_it == std::nullopt) {
-        parse_nonresHIR_in_s (&x_meta, key, slow_get_page);
-
-        return *x_meta.cache_it;    // !!!
-    }
+    if (x_meta.status == HIR && x_meta.q_it == std::nullopt)
+        return std::nullopt;
 
     auto& x_s_it = *x_meta.s_it;
 
@@ -114,7 +111,29 @@ template <typename F>
 std::optional<std::pair<keyT, page_t>> LIRS_cache_t<cache_content, page_t, keyT>::insert (const keyT key, const F slow_get_page)
 {
     std::optional<std::pair<keyT, page_t>> evicted_page = {};
+
+    if (x_meta.status == HIR && x_meta.q_it == std::nullopt)
+        return parse_nonresHIR_in_s (&x_meta, key, slow_get_page); // !!! (have to be pair)
     
+    return parse_new_page (key, slow_get_page);
+}
+
+template<typename cache_content, typename page_t, typename keyT>
+void LIRS_cache_t<cache_content, page_t, keyT>::erase (keyT key)
+{
+    meta& page_to_erase = cache_hash.find (evicted_key)->second;
+
+    cache_list.erase (page_to_erase.cache_it);
+    s_stack.erase (page_to_erase.s_it);
+    q_list.erase (page_to_erase.q_it);
+    
+    cache_hash.erase (key);
+}
+
+template <typename meta, typename page_t, typnename keyT>
+template <typename F>
+page_t LIRS_cache_t<meta, page_t, keyT>::parse_new_page (keyT key, F slow_get_page)
+{
     bool newpage_is_LIR = false;
 
     if (LIR_cnt < LIR_size) {
@@ -148,23 +167,11 @@ std::optional<std::pair<keyT, page_t>> LIRS_cache_t<cache_content, page_t, keyT>
     return evicted_page;
 }
 
-template<typename cache_content, typename page_t, typename keyT>
-void LIRS_cache_t<cache_content, page_t, keyT>::erase (keyT key)
-{
-    meta& page_to_erase = cache_hash.find (evicted_key)->second;
-
-    cache_list.erase (page_to_erase.cache_it);
-    s_stack.erase (page_to_erase.s_it);
-    q_list.erase (page_to_erase.q_it);
-    
-    cache_hash.erase (key);
-}
-
 template<typename meta, typename page_t, typename keyT> 
 template<typename F>
 bool LIRS_cache_t<meta, page_t, keyT>::parse_nonresHIR_in_s (meta* x_meta, keyT key, F slow_get_page)
 {
-    delete_front_q ();
+    page_t evicted_page = delete_front_q ();
 
     cache_list.push_front (slow_get_page(key));
     x_meta->cache_it = cache_list.begin ();
@@ -180,7 +187,7 @@ bool LIRS_cache_t<meta, page_t, keyT>::parse_nonresHIR_in_s (meta* x_meta, keyT 
 
     // process_page (key);
 
-    return false;
+    return evicted_page;
 }
 
 template<typename meta, typename page_t, typename keyT> 
