@@ -31,9 +31,9 @@ public:
     std::optional<page_t> lookup (const keyT key);
 
     template<typename F>
-    std::optional<std::pair<keyT, page_t>> insert (keyT key, const F slow_get_page);
+    std::optional<std::pair<keyT, page_t>> insert (const keyT key, const F slow_get_page);
 
-    void erase (keyT key);
+    void erase (const keyT key);
 };
 
 template<typename cache_content, typename page_t, typename keyT> 
@@ -62,7 +62,7 @@ std::optional<page_t> LFU_cache_t<cache_content, page_t, keyT>::lookup (const ke
 
 template <typename cache_content, typename page_t, typename keyT>
 template <typename F>
-std::optional<std::pair<keyT, page_t>> LFU_cache_t<cache_content, page_t, keyT>::insert (keyT key, const F slow_get_page)
+std::optional<std::pair<keyT, page_t>> LFU_cache_t<cache_content, page_t, keyT>::insert (const keyT key, const F slow_get_page)
 {
     std::optional<std::pair<keyT, page_t>> evicted_page = {};
 
@@ -84,7 +84,7 @@ std::optional<std::pair<keyT, page_t>> LFU_cache_t<cache_content, page_t, keyT>:
 
     // process_page (key);
 
-    return evicted_page; // !
+    return evicted_page;
 }
 
 template<typename cache_content, typename page_t, typename keyT>

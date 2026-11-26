@@ -5,34 +5,45 @@
 #include "../debug.hpp"
 #endif
 
-#define COUNT_HITS                                  \
-    LIRS_cache_t<LIRS_meta<>, PAGE_T> L1(cache_sz); \
-                                                    \
-    int hit_cnt = 0;                                \
-    for (int it = 0; it < data_cnt; it++)           \
+#define COUNT_HITS                                            \
+    LIRS_cache_t<LIRS_meta<>, PAGE_T> L1 (cache_sz);          \
+                                                              \
+    int hit_cnt = 0;                                          \
+    int current_key = 0;                                      \
+                                                              \
+    for (int it = 0; it < data_cnt; it++) {                   \
+        current_key = cache_requests[it];                     \
+                                                              \
+        if (L1.lookup (current_key) != std::nullopt)          \
+            hit_cnt++;                                        \
+                                                              \
+        else                                                  \
+            L1.insert (current_key, slow_get_page);           \
+                                                              \
+    }
+
+#ifdef ZERO_TEST
+TEST (LIRS, Test0)
+{
+    int cache_sz = 3, data_cnt = 7;
+    int cache_requests[] = {1, 2, 3, 3, 1, 1, 1};
+
+    LIRS_cache_t<LIRS_meta<>, PAGE_T> L1(cache_sz);
+
+    int hit_cnt = 0;
+    for (int it = 0; it < data_cnt; it++) {
+        std::cout << "________________________________________________________________\n";
+        std::cout << GREEN "the try = " << it + 1 <<  COLOR_RESET ", hit count = " << hit_cnt << "\n";
+
         hit_cnt += L1.lookup_update(cache_requests[it], slow_get_page);
 
-// TEST (LIRS, Test0)
-// {
-//     int cache_sz = 3, data_cnt = 7;
-//     int cache_requests[] = {1, 2, 3, 3, 1, 1, 1};
-
-//     LIRS_cache_t<LIRS_meta<>, PAGE_T> L1(cache_sz);
-
-//     int hit_cnt = 0;
-//     for (int it = 0; it < data_cnt; it++) {
-//         std::cout << "________________________________________________________________\n";
-//         std::cout << GREEN "the try = " << it + 1 <<  COLOR_RESET ", hit count = " << hit_cnt << "\n";
-
-//         hit_cnt += L1.lookup_update(cache_requests[it], slow_get_page);
-
-//         print_LIRS_data(&L1);
-//         print_LIRS_meta(&L1);
-//         std::cout << "\n";
-//     }
-
-//     EXPECT_EQ(hit_cnt, 4);
-// }
+        print_LIRS_data(&L1);
+        print_LIRS_meta(&L1);
+        std::cout << "\n";
+    }
+    EXPECT_EQ(hit_cnt, 4);
+}
+#endif
 
 // 1. Interleaved LIR hits and HIR misses (scan resistance)
 TEST (LIRS, Test1)
